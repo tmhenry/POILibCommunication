@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+using System.Windows;
+
+namespace POILibCommunication
+{
+    //Define all the global variables here
+    public static class POIGlobalVar
+    {
+        public static POIKernel SystemKernel { get; set; }
+        public static POIComServer SystemDataHandler { get; set; }
+        public static Dictionary<string, POIUser> UserProfiles { get; set; }
+        //public static POIUIScheduler Scheduler { get; set; }
+
+        //public static String DNSServer = @"http://poiwebservice.elasticbeanstalk.com/dnsServer/interface.php";
+        //public static Window CurWindow = Application.Current.MainWindow;
+    }
+}
