@@ -65,6 +65,30 @@ namespace POILibCommunication
             offset += 1;
         }
 
+        private void serializeFloat(byte[] buffer, ref int offset, float val)
+        {
+            Array.Copy(BitConverter.GetBytes(val), 0, buffer, offset, sizeof(float));
+            offset += sizeof(float);
+        }
+
+        private void deserializeFloat(byte[] buffer, ref int offset, ref float val)
+        {
+            val = BitConverter.ToSingle(buffer, offset);
+            offset += sizeof(float);
+        }
+
+        private void serializeDouble(byte [] buffer, ref int offset, double val)
+        {
+            Array.Copy(BitConverter.GetBytes(val), 0, buffer, offset, sizeof(double));
+            offset += sizeof(double);
+        }
+
+        private void deserializeDouble(byte[] buffer, ref int offset, ref double val)
+        {
+            val = BitConverter.ToDouble(buffer, offset);
+            offset += sizeof(double);
+        }
+
         #endregion
 
         public void parsePacket(byte[] data)
@@ -107,6 +131,10 @@ namespace POILibCommunication
 
                 case POIMsgDefinition.POI_PRESENTATION_CONTROL:
                     parsePresControlMsg(data, offset);
+                    break;
+
+                case POIMsgDefinition.POI_USER_COMMENTS:
+                    parseUserComments(data, offset);
                     break;
 
             }
@@ -303,6 +331,23 @@ namespace POILibCommunication
 
             Delegates.PresCtrlHandler.presCtrlMsgReceived(ref par);
             //(POIGlobalVar.SystemKernel as POIUIKernel).Handle_PresentationControl(ref par);
+        }
+
+        #endregion
+
+        #region User comments parsing and composition
+
+        private void parseUserComments(byte[] buffer, int offset)
+        {
+            POIComment comment = new POIComment();
+            comment.deserialize(buffer, ref offset);
+
+            Delegates.CommentHandler.handleComment(comment);
+        }
+
+        public byte[] getComment(POIComment comment)
+        {
+            return composePacket(POIMsgDefinition.POI_USER_COMMENTS, new byte[0], comment.serialize());
         }
 
         #endregion

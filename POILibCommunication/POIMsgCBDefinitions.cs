@@ -53,4 +53,9 @@ namespace POILibCommunication
         unsafe void Handle_TouchEnd(byte* touchData);
         unsafe void Handle_TouchMove(byte* touchData);
     }
+
+    public interface POICommentCB
+    {
+        void handleComment(POIComment comment);
+    }
 }

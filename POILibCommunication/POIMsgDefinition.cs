@@ -156,6 +156,7 @@ namespace POILibCommunication
 
     #endregion
 
+
     static class POIMsgDefinition
     {
         //Global constants
@@ -185,5 +186,8 @@ namespace POILibCommunication
 
         //Constants for Presentation control
         public const int POI_PRESENTATION_CONTROL             = 30;
+
+        //Constants for user comments
+        public const int POI_USER_COMMENTS                    = 50;
     }
 }

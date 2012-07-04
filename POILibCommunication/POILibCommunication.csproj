@@ -47,10 +47,12 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="POIBroadcast.cs" />
+    <Compile Include="POIComment.cs" />
     <Compile Include="POIComServer.cs" />
     <Compile Include="POIEventArgs.cs" />
     <Compile Include="POIGlobalVar.cs" />
     <Compile Include="POIKernel.cs" />
+    <Compile Include="POIMessage.cs" />
     <Compile Include="POIMsgCBDefinitions.cs" />
     <Compile Include="POIMsgDefinition.cs" />
     <Compile Include="POIMsgDelegateContainer.cs" />
