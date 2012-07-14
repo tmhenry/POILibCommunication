@@ -47,19 +47,24 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="POIBroadcast.cs" />
-    <Compile Include="POIComment.cs" />
+    <Compile Include="POICommentMsg.cs" />
     <Compile Include="POIComServer.cs" />
     <Compile Include="POIEventArgs.cs" />
     <Compile Include="POIGlobalVar.cs" />
+    <Compile Include="POIInitializationMsg.cs" />
     <Compile Include="POIKernel.cs" />
     <Compile Include="POIMessage.cs" />
     <Compile Include="POIMsgCBDefinitions.cs" />
     <Compile Include="POIMsgDefinition.cs" />
     <Compile Include="POIMsgDelegateContainer.cs" />
     <Compile Include="POIMsgParser.cs" />
+    <Compile Include="POIPresentationMsg.cs" />
+    <Compile Include="POIPushMsg.cs" />
+    <Compile Include="POIRealtimeMsg.cs" />
     <Compile Include="POITCPConnection.cs" />
     <Compile Include="POIUDPReceiver.cs" />
     <Compile Include="POIUser.cs" />
+    <Compile Include="POIWhiteboardMsg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

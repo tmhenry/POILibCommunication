@@ -28,40 +28,7 @@ namespace POILibCommunication
 
         public void Start()
         {
-            /*
-            int numBytes = 0;
-
-            while (true)
-            {
-                numBytes = myUdpSock.ReceiveFrom(buffer, ref remoteEP);
-                string remoteIP = ( remoteEP as IPEndPoint).Address.ToString();
-
-                if (POIGlobalVar.UserProfiles.ContainsKey(remoteIP))
-                {
-                    //Only parse message that are from a valid user
-                    POIUser curUser = POIGlobalVar.UserProfiles[remoteIP];
-                    if (curUser.Status == POIUser.ConnectionStatus.Connected)
-                    {
-                        //If the socket is constructed
-                        if (curUser.UdpChannel == null)
-                        {
-                            //Set the new UDP connection for real time control
-                            curUser.UdpChannel = myUdpSock;
-                            curUser.UDPEndPoint = remoteEP as IPEndPoint;
-                        }
-
-                        if (numBytes > 0)
-                        {
-                            ParsingData(buffer, curUser);
-                        }
-
-                    }
-                }
-
-                Thread.Sleep(1);
-            }
-            */
-            
+                       
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.SetBuffer(buffer, 0, 1500);
             args.RemoteEndPoint = remoteEP;

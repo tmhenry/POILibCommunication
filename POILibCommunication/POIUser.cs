@@ -26,7 +26,7 @@ namespace POILibCommunication
         public POITCPConnection DataChannel { get; set; }
         public Socket UdpChannel { get; set; }
 
-
+        private String secret = null;
 
         //DataParsers
         //public DataParsers myParser;

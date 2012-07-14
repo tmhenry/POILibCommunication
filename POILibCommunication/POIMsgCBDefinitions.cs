@@ -17,7 +17,7 @@ namespace POILibCommunication
 
     public interface POIInitializeClientMsgCB
     {
-        void helloMsgReceived(ref HelloPar par);
+        void helloMsgReceived(POIHelloMsg par);
     }
 
     //Handle broadcast type of message sent from server
@@ -38,7 +38,7 @@ namespace POILibCommunication
     //Handle Presentation control messages
     public interface POIPresentationControlMsgCB
     {
-        void presCtrlMsgReceived(ref PresentationControlPar par);
+        void presCtrlMsgReceived(POIPresCtrlMsg msg);
     }
 
     public interface POIRealtimeMsgCB
@@ -57,5 +57,11 @@ namespace POILibCommunication
     public interface POICommentCB
     {
         void handleComment(POIComment comment);
+    }
+
+    public interface POIWhiteBoardMsgCB
+    {
+        void showWhiteBoard();
+        void hideWhiteBoard();
     }
 }

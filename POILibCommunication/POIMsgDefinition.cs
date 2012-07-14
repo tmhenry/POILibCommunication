@@ -189,5 +189,16 @@ namespace POILibCommunication
 
         //Constants for user comments
         public const int POI_USER_COMMENTS                    = 50;
+
+        //Constants for realtime messages
+        public const int POI_TOUCHBEGIN                       = 70;
+        public const int POI_TOUCHMOVE                        = 71;
+        public const int POI_TOUCHEND                         = 72;
+        public const int POI_SCALE                            = 73;
+        public const int POI_ROTATE                           = 74;
+
+        //Constants for whiteboard control msg
+        public const int POI_WHITEBOARD_SHOW                  = 90;
+        public const int POI_WHITEBOARD_HIDE                  = 91;
     }
 }

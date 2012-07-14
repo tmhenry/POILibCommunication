@@ -99,6 +99,7 @@ namespace POILibCommunication
             byte cmdType = 0;
             deserializeByte(data, ref offset, ref cmdType);
 
+            Console.WriteLine("Current type is: " + cmdType);
 
             switch(cmdType)
             {
@@ -107,6 +108,7 @@ namespace POILibCommunication
                     parseHelloMsg(data, offset);
                     break;
                 case POIMsgDefinition.POI_WELCOME:
+                    parseWelcomeMsg(data, offset);
                     break;
 
                 //Broadcast:
@@ -135,6 +137,18 @@ namespace POILibCommunication
 
                 case POIMsgDefinition.POI_USER_COMMENTS:
                     parseUserComments(data, offset);
+                    break;
+
+                case POIMsgDefinition.POI_PUSH:
+                    parsePushMsg(data, offset);
+                    break;
+
+                case POIMsgDefinition.POI_WHITEBOARD_SHOW:
+                    parseWhiteboardShow(data, offset);
+                    break;
+
+                case POIMsgDefinition.POI_WHITEBOARD_HIDE:
+                    parseWhiteboardHide(data, offset);
                     break;
 
             }
@@ -249,93 +263,47 @@ namespace POILibCommunication
 
         #endregion
 
-        #region Initialization msg parsing and compostion
-
         private void parseHelloMsg(byte[] buffer, int offset)
         {
             if (privilegeLevel < Privilege.Authentication) return;
 
-            HelloPar par = new HelloPar();
-            deserializeByte(buffer, ref offset, ref par.userType);
-            deserializeByte(buffer, ref offset, ref par.connectionType);
-
+            POIHelloMsg msg = new POIHelloMsg();
+            msg.deserialize(buffer, ref offset);
 
             Console.WriteLine(@"Hello");
  
-            initClientMsgDelegate.helloMsgReceived(ref par);
+            initClientMsgDelegate.helloMsgReceived(msg);
         }
 
-        public byte[] getWelcomeMsg(ref WelcomePar par)
+        private void parseWelcomeMsg(byte[] buffer, int offset)
         {
-            byte[] parBytes = new byte[POIMsgDefinition.POI_MAXPARAMETERSSIZE];
+            POIWelcomeMsg msg = new POIWelcomeMsg();
+            msg.deserialize(buffer, ref offset);
 
-            int offset = 0;
-            serializeInt32(parBytes, ref offset, par.status);
-
-            parBytes = parBytes.Take(offset).ToArray();
-            return composePacket(POIMsgDefinition.POI_WELCOME, parBytes);
-        }
-
-        #endregion
-
-        #region Push/Pull msg parsing and compostion
-
-        public byte[] getPushMsg(ref PushPar par, byte[] data)
-        {
-            byte[] parBytes = new byte[POIMsgDefinition.POI_MAXPARAMETERSSIZE];
-
-            int offset = 0;
-            serializeInt32(parBytes, ref offset, par.type);
-            serializeInt32(parBytes, ref offset, par.dataSize);
-
-            parBytes = parBytes.Take(offset).ToArray();
-            return composePacket(POIMsgDefinition.POI_PUSH, parBytes, data);
-        }
-
-        public byte[] getPullMsg(ref PullPar par)
-        {
-            return null;
+            Console.WriteLine(@"Welcome");
         }
 
         private void parsePushMsg(byte[] buffer, int offset)
         {
+            Console.WriteLine("Here in push!");
             if (privilegeLevel < Privilege.Viewer || Type != ParserType.Data) return;
 
-            PushPar par = new PushPar();
 
-            deserializeInt32(buffer, ref offset, ref par.type);
-            deserializeInt32(buffer, ref offset, ref par.dataSize);
+            POIPushMsg msg = new POIPushMsg();
+            msg.deserialize(buffer, ref offset);
 
-            byte[] data = buffer.Skip(offset).ToArray();
-
-            if (data.Length != par.dataSize)
-            {
-                Console.WriteLine(@"Error: data size does not match");
-            }
-
-            POIGlobalVar.SystemKernel.Handle_Push(ref par, data);
+            Console.WriteLine("Type: " + msg.Type);
         }
-
-        #endregion
-
-        #region Presentation control msg parsing and compostion
 
         private void parsePresControlMsg(byte[] buffer, int offset)
         {
             if (privilegeLevel < Privilege.Commander) return;
 
-            PresentationControlPar par = new PresentationControlPar();
+            POIPresCtrlMsg msg = new POIPresCtrlMsg();
+            msg.deserialize(buffer, ref offset);
 
-            deserializeInt32(buffer, ref offset, ref par.ctrlType);
-            deserializeInt32(buffer, ref offset, ref par.slideIndex);
-
-            Delegates.PresCtrlHandler.presCtrlMsgReceived(ref par);
-            //(POIGlobalVar.SystemKernel as POIUIKernel).Handle_PresentationControl(ref par);
+            Delegates.PresCtrlHandler.presCtrlMsgReceived(msg);
         }
-
-        #endregion
-
-        #region User comments parsing and composition
 
         private void parseUserComments(byte[] buffer, int offset)
         {
@@ -345,12 +313,21 @@ namespace POILibCommunication
             Delegates.CommentHandler.handleComment(comment);
         }
 
-        public byte[] getComment(POIComment comment)
+        private void parseWhiteboardShow(byte[] buffer, int offset)
         {
-            return composePacket(POIMsgDefinition.POI_USER_COMMENTS, new byte[0], comment.serialize());
+            POIShowWhiteboardMsg msg = new POIShowWhiteboardMsg();
+            msg.deserialize(buffer, ref offset);
+
+            Delegates.WhiteboardCtrlHandler.showWhiteBoard();
         }
 
-        #endregion
+        private void parseWhiteboardHide(byte[] buffer, int offset)
+        {
+            POIHideWhiteboardMsg msg = new POIHideWhiteboardMsg();
+            msg.deserialize(buffer, ref offset);
+
+            Delegates.WhiteboardCtrlHandler.hideWhiteBoard();
+        }
 
     }
 }

@@ -13,6 +13,7 @@ namespace POILibCommunication
         public POIPushPullClientMsgCB pushPullClientMsgDelegate { get; set; }
         public POIPresentationControlMsgCB PresCtrlHandler { get; set; }
         public POIRealtimeMsgCB RealtimeCtrlHandler { get; set; }
+        public POIWhiteBoardMsgCB WhiteboardCtrlHandler { get; set; }
 
         public POICommentCB CommentHandler { get; set; }
     }

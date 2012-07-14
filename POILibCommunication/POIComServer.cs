@@ -45,7 +45,8 @@ namespace POILibCommunication
                     user.Status = POIUser.ConnectionStatus.Disconnected;
 
                     //Notify the kernel
-                    POIGlobalVar.SystemKernel.Handle_UserLeave(new POIUserEventArgs(user, new Point(0, 0)));
+                    //POIGlobalVar.SystemKernel.Handle_UserLeave(new POIUserEventArgs(user, new Point(0, 0)));
+                    POIGlobalVar.SystemKernel.HandleUserLeave(user);
                 }
                 else if (connection.Type == POIMsgParser.ParserType.Data)
                 {
@@ -157,7 +158,8 @@ namespace POILibCommunication
 
             try
             {
-                POIGlobalVar.SystemKernel.Handle_UserJoin(new POIUserEventArgs(user, new Point(0, 0)));
+                //POIGlobalVar.SystemKernel.Handle_UserJoin(new POIUserEventArgs(user, new Point(0, 0)));
+                POIGlobalVar.SystemKernel.HandleUserJoin(user);
             }
             catch (Exception e)
             {
@@ -179,6 +181,8 @@ namespace POILibCommunication
                 {
                     connection.Delegates = user;
                     user.DataChannel = connection;
+
+                    connection.InitPayloadBufferForDataChannel();
                 }
             }
             else //Drop the connection
@@ -187,291 +191,9 @@ namespace POILibCommunication
             }
         }
 
-        /*
-        private unsafe void TCPDataReceiving(object data)
-        {
-            Tuple<Socket, POIUser> dataTuple = (Tuple<Socket, POIUser>)data;
-            
-            //Convert the argument to a socket
-            Socket mySocket = dataTuple.Item1;
-            POIUser myUser = dataTuple.Item2;
-
-            NetworkStream myStream = new NetworkStream(mySocket);
-            
-            string packet;
-            String[] packetInfo;
-
-            //Readin the first packet to decide the type of connection
-            packet = ReadControlMsg(myStream);
-            myStream.Close();
-
-            Console.WriteLine(packet);
-
-            if (packet == "TCP_Data")
-            {
-                //Set the tcp data channel
-                myUser.SetConnection(ConType.TCP_DATA, mySocket);
-                
-                byte[] dataBuffer = new byte[1400];
-                //Store the buffer information into the user
-                myUser.InitTCPDataBuffer(mySocket, dataBuffer);
-
-                mySocket.ReceiveTimeout = 10000;
-                mySocket.BeginReceive(
-                    dataBuffer,
-                    0,
-                    TCPDataControlMsgSize,
-                    SocketFlags.None,
-                    new AsyncCallback(ReadTCPDataCallback),
-                    mySocket
-                );
-            }
-            else if (packet == "TCP_Control")
-            {
-                //Set the tcp control channel
-                myUser.SetConnection(ConType.TCP_CONTROL, mySocket);
-                mySocket.ReceiveTimeout = 10000;
-                mySocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.NoDelay, true);
-
-
-                SocketAsyncEventArgs controlArg = new SocketAsyncEventArgs();
-                controlArg.SetBuffer(myUser.TCP_ControlBuffer, 0, 1400);
-                controlArg.Completed += new EventHandler<SocketAsyncEventArgs>(ReadTCPControl_Completed);
-                controlArg.UserToken = myUser;
-
-                mySocket.ReceiveAsync(controlArg);
-
-                
-            }
-            else
-            {
-                RemoveConnection(mySocket);
-                mySocket.Close();
-            }   
-
-        }*/
-
-        
-        /*
-        private void ReadTCPDataCallback(IAsyncResult myResult)
-        {
-            try
-            {
-                Socket mySocket = (Socket)myResult.AsyncState;
-                int recv = mySocket.EndReceive(myResult);
-                Console.WriteLine("Receive successfully!" + recv);
-
-                //Get the user associated with the socket
-                IPEndPoint remoteIPEP = mySocket.RemoteEndPoint as IPEndPoint;
-                String remoteIP = IPAddress.Parse(remoteIPEP.Address.ToString()).ToString();
-                POIUser myUser = POIGlobalVar.UserProfiles[remoteIP];
-
-                Tuple<byte[], int> bufferInfo = myUser.GetTCPDataBuffer(mySocket);
-                byte[] myBuffer = bufferInfo.Item1.Take(recv).ToArray();
-
-                byte[] optionBytes = myBuffer.Take(sizeof(Int32)).ToArray();
-                byte[] paramBytes = myBuffer.Skip(sizeof(Int32)).Take(sizeof(Int32)).ToArray();
-                    
-                //Get the option and the size
-                int option = BitConverter.ToInt32(optionBytes, 0);
-                int parameter = BitConverter.ToInt32(paramBytes, 0);
-                //Console.WriteLine(option + " " + parameter);
-
-                //Parse the received packet
-                switch (option)
-                {
-                    case 0:
-                        Console.WriteLine("PULL");
-                        byte[] pullBuffer = POIGlobalVar.SystemKernel.Handle_UserPullFromTable(myUser);
-                        int length = pullBuffer.Length;
-                        Console.WriteLine(length);
-                        byte[] headerBytes = GetBytesFromInt(length);
-                        pullBuffer = headerBytes.Concat(pullBuffer).ToArray();
-                        Console.WriteLine(BitConverter.ToInt32(headerBytes, 0));
-
-                        if (pullBuffer != null)
-                        {
-                            mySocket.BeginSend(
-                               pullBuffer,
-                               0,
-                               pullBuffer.Length,
-                               SocketFlags.None,
-                               new AsyncCallback(PullFromTableCallback),
-                               mySocket
-                            );
-                        }
-                        
-                        break;
-                    case 1:
-                        Console.WriteLine("PUSH");
-                        int dataSize = parameter;
-                        byte[] dataBuffer = new byte[dataSize];
-
-                        //Store the buffer information into the user
-                        myUser.RemoveTCPDataBuffer(mySocket);
-                        myUser.InitTCPDataBuffer(mySocket, dataBuffer);
-                        mySocket.ReceiveTimeout = 10000;
-
-                        //int size = Math.Min(1400, dataSize);
-                        int size = dataSize;
-
-                        mySocket.BeginReceive(
-                           dataBuffer,
-                           0,
-                           size,
-                           SocketFlags.None,
-                           new AsyncCallback(PushToTableCallback),
-                           mySocket
-                        );
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        private unsafe byte [] GetBytesFromInt(int myInt)
-        {
-            byte [] myBytes = new byte[sizeof(int)];
-            fixed(byte* ptr = myBytes)
-            {
-                int* intPtr = (int *)ptr;
-                *intPtr = myInt;
-            }
-            return myBytes;
-        }
-
-        private void PullFromTableCallback(IAsyncResult myResult)
-        {
-            Socket mySock = myResult.AsyncState as Socket;
-            int send = mySock.EndSend(myResult);
-            Console.WriteLine("Send successfully!" + send);
-
-            //Get the user associated with the socket
-            IPEndPoint remoteIPEP = mySock.RemoteEndPoint as IPEndPoint;
-            String remoteIP = IPAddress.Parse(remoteIPEP.Address.ToString()).ToString();
-            POIUser myUser = POIGlobalVar.UserProfiles[remoteIP];
-
-            //Clear the data buffer for the current socket
-            myUser.RemoveTCPDataBuffer(mySock);
-            RemoveConnection(mySock);
-            mySock.Close();
-        }
-
-        private void PushToTableCallback(IAsyncResult myResult)
-        {
-            Socket mySocket = (Socket)myResult.AsyncState;
-            int recv = mySocket.EndReceive(myResult);
-
-            //Get the user associated with the socket
-            IPEndPoint remoteIPEP = mySocket.RemoteEndPoint as IPEndPoint;
-            String remoteIP = IPAddress.Parse(remoteIPEP.Address.ToString()).ToString();
-            POIUser myUser = POIGlobalVar.UserProfiles[remoteIP];
-
-            Tuple<byte[], int> bufferInfo = myUser.GetTCPDataBuffer(mySocket);
-            byte[] myBuffer = bufferInfo.Item1;
-            int startIndex = bufferInfo.Item2;
-            int dataSize = myBuffer.Length;
-
-            startIndex += recv;
-            if (dataSize > startIndex)
-            {
-                myUser.SetTCPDataBuffer(mySocket, myBuffer, startIndex);
-
-                mySocket.ReceiveTimeout = 10000;
-
-                //Console.WriteLine(startIndex + " " + dataSize);
-
-                //int size = Math.Min(1400, dataSize - startIndex);
-                int size = dataSize - startIndex;
-
-                try
-                {
-                    mySocket.BeginReceive(
-                        myBuffer,
-                        startIndex,
-                        size,
-                        SocketFlags.None,
-                        new AsyncCallback(PushToTableCallback),
-                        mySocket
-                    );
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                
-            }
-            else
-            {
-                //Serialize the buffer data into an image
-                Console.WriteLine("Received successfully: " + dataSize);
-
-                //Remember to remove this stupid condition!!
-                if(dataSize > 100000)
-                    POIGlobalVar.SystemKernel.Handle_UserPushToTable(myBuffer, dataSize);
-
-                //Clear the data buffer for the current socket
-                myUser.RemoveTCPDataBuffer(mySocket);
-                RemoveConnection(mySocket);
-                mySocket.Close();
-            }
-        }
-        */
         private void RemoveConnection(Socket mySocket)
         {
-            /*
-            //handle the user leave or connection close
-            IPEndPoint remoteIPEP = mySocket.RemoteEndPoint as IPEndPoint;
-            String remoteIP = IPAddress.Parse(remoteIPEP.Address.ToString()).ToString();
             
-            if (connectionCount.ContainsKey(remoteIP) && connectionCount[remoteIP] > 1)
-            {
-                connectionCount[remoteIP] = connectionCount[remoteIP] - 1;
-            }
-            else
-            {
-                //userLeave(this, new POIUserEventArgs(userCollection[remoteIP], new Point(0,0)));
-                POIGlobalVar.SystemKernel.Handle_UserLeave(new POIUserEventArgs(userCollection[remoteIP], new Point(0, 0)));
-                connectionCount.Remove(remoteIP);
-                userCollection.Remove(remoteIP);
-            }*/
-
-        }
-
-        private string ReadControlMsg(NetworkStream inputStream)
-        {
-            int recvedByteCount = 0;
-            int maxControlMsgSize = 1000;
-            char[] myBuff = new char[maxControlMsgSize];
-
-            while (true)
-            {
-                //Read in a single character;
-                int status = inputStream.ReadByte();
-                //Check if the stream has been closed
-                if (status == -1) return "";
-
-                char curChar = (char)status;
-                if (curChar == '\n')
-                {
-                    //myBuff[recvedByteCount] = '\0';
-                    break;
-                }
-                else
-                {
-                    myBuff[recvedByteCount] = curChar;
-                    recvedByteCount++;
-                }
-            }
-
-            string controlMsg = new string(myBuff, 0, recvedByteCount);
-            
-            return controlMsg;
         }
 
     }

@@ -34,6 +34,8 @@ namespace POILibCommunication
         public byte[] Payload = new byte[maxCtrlPayloadSize];
         public byte[] Header = new byte[maxHeaderSize];
 
+        
+
         public POITCPConnection(Socket sock)
         {
             mySocket = sock;
@@ -121,6 +123,9 @@ namespace POILibCommunication
                             PayloadReceived += bytesProcessed;
                             remainingBytes -= bytesProcessed;
                             offset += bytesProcessed;
+
+                            //Console.WriteLine("Payload received: " + PayloadReceived);
+                            //Console.WriteLine("remainingPayloadBytes: " + remainingPayloadBytes);
                         }
                         else
                         {
@@ -133,6 +138,8 @@ namespace POILibCommunication
                             PayloadReceived += bytesProcessed;
                             remainingBytes -= bytesProcessed;
                             offset += bytesProcessed;
+
+                            Console.WriteLine(PayloadReceived);
 
                             //Payload received completely
                             //Console.WriteLine("Here!");
@@ -187,16 +194,22 @@ namespace POILibCommunication
             mySocket.Close();
         }
 
+        public void InitPayloadBufferForDataChannel()
+        {
+            Payload = new byte[maxDataPayloadSize];
+        }
+
         /*
          * Delegate functions for POI initialization protocol
          */
-        public void helloMsgReceived(ref HelloPar par)
+        public void helloMsgReceived(POIHelloMsg par)
         {
             //Notify data handler that authentication has been done
             //Proper CB functions are set here
-            int userType = (int)par.userType;
-            int conType = (int)par.connectionType;
+            int userType = (int)par.UserType;
+            int conType = (int)par.ConnType;
 
+            
             if (conType == POIMsgDefinition.POI_CONTROL_CHANNEL)
             {
                 //POIGlobalVar.SystemDataHandler.CtrlChannelAuthenticated(this);
@@ -221,12 +234,12 @@ namespace POILibCommunication
             //Call connection authenticated callback
             connectionCBDelegate.ConnectionAuthenticated(this);
 
-            //Send back the welcome message
-            WelcomePar welPar = new WelcomePar();
-            welPar.status = 1;
+            
 
-            byte[] welcomeMsg = getWelcomeMsg(ref welPar);
-            SendData(welcomeMsg);
+            //Send back the welcome message
+            POIWelcomeMsg welcomeMsg = new POIWelcomeMsg(1);
+            SendData(welcomeMsg.getPacket());
+            
         }
     }
 }
