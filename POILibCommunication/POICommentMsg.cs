@@ -19,10 +19,10 @@ namespace POILibCommunication
         public enum OperationMode
         {
             CREATE = 0,
-            REMOVE,
-            TEXT_CHANGED,
-            POPOUT,
-            COLLAPSE
+            POP,
+            COLLAPSE,
+            POSITOIN_CHANGED,
+            CONTENT_CHANGED,            
         }
 
         int size;
@@ -41,6 +41,9 @@ namespace POILibCommunication
         {
             depth = myDepth;
             mode = myMode;
+
+            fieldSize = 2 * sizeof(int);
+            size = fieldSize;
         }
 
         public POITextComment(int myDepth, float myX, float myY, String myMsg)
@@ -69,19 +72,24 @@ namespace POILibCommunication
 
             if (mode == OperationMode.CREATE)
             {
-                serializeInt32(buffer, ref offset, length);
                 serializeFloat(buffer, ref offset, x);
                 serializeFloat(buffer, ref offset, y);
+                serializeInt32(buffer, ref offset, length);
 
                 Array.Copy(stringdata, 0, buffer, offset, length);
                 offset += length;
             }
-            else if(mode == OperationMode.TEXT_CHANGED)
+            else if(mode == OperationMode.CONTENT_CHANGED)
             {
                 serializeInt32(buffer, ref offset, length);
 
                 Array.Copy(stringdata, 0, buffer, offset, length);
                 offset += length;
+            }
+            else if (mode == OperationMode.POSITOIN_CHANGED)
+            {
+                serializeFloat(buffer, ref offset, x);
+                serializeFloat(buffer, ref offset, y);
             }
         }
 
@@ -96,9 +104,9 @@ namespace POILibCommunication
 
             if (mode == OperationMode.CREATE)
             {
-                deserializeInt32(buffer, ref offset, ref length);
                 deserializeFloat(buffer, ref offset, ref x);
                 deserializeFloat(buffer, ref offset, ref y);
+                deserializeInt32(buffer, ref offset, ref length);
 
                 byte[] stringData = buffer.Skip(offset).Take(length).ToArray();
                 offset += length;
@@ -109,7 +117,7 @@ namespace POILibCommunication
                 fieldSize = 2 * sizeof(float) + 3 * sizeof(int);
                 size = fieldSize + length;
             }
-            else if (mode == OperationMode.TEXT_CHANGED)
+            else if (mode == OperationMode.CONTENT_CHANGED)
             {
                 deserializeInt32(buffer, ref offset, ref length);
                 byte[] stringData = buffer.Skip(offset).Take(length).ToArray();
@@ -120,6 +128,14 @@ namespace POILibCommunication
 
                 fieldSize = 3 * sizeof(int);
                 size = fieldSize + length;
+            }
+            else if (mode == OperationMode.POSITOIN_CHANGED)
+            {
+                deserializeFloat(buffer, ref offset, ref x);
+                deserializeFloat(buffer, ref offset, ref y);
+
+                fieldSize = 2 * sizeof(int) + 2 * sizeof(float);
+                size = fieldSize;
             }
         }
 
