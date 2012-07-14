@@ -145,6 +145,8 @@ namespace POILibCommunication
         {
             x = myX;
             y = myY;
+
+            time = (float)(DateTime.Now - referenceTime).TotalMilliseconds;
         }
 
         public POIBeizerPathPoint(float myX, float myY, DateTime timeStamp)
@@ -159,14 +161,18 @@ namespace POILibCommunication
         {
             serializeFloat(buffer, ref offset, x);
             serializeFloat(buffer, ref offset, y);
-            serializeFloat(buffer, ref offset, time);
+
+            //To do: process the time
+            //serializeFloat(buffer, ref offset, time);
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
             deserializeFloat(buffer, ref offset, ref x);
             deserializeFloat(buffer, ref offset, ref y);
-            deserializeFloat(buffer, ref offset, ref time);
+
+            //To do: process the time
+            //deserializeFloat(buffer, ref offset, ref time);
         }
     }
 
