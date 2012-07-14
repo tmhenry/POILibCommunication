@@ -43,14 +43,20 @@ namespace POILibCommunication
 
         protected void serializeFloat(byte[] buffer, ref int offset, float val)
         {
-            Array.Copy(BitConverter.GetBytes(val), 0, buffer, offset, sizeof(float));
-            offset += sizeof(float);
+            int size = sizeof(float);
+            int temp = IPAddress.HostToNetworkOrder((int)val);
+          
+            Array.Copy(BitConverter.GetBytes(temp), 0, buffer, offset, size);
+            offset += size;
         }
 
         protected void deserializeFloat(byte[] buffer, ref int offset, ref float val)
         {
-            val = BitConverter.ToSingle(buffer, offset);
-            offset += sizeof(float);
+            int size = sizeof(float);
+            int temp = BitConverter.ToInt32(buffer, offset);
+            val = (float) IPAddress.NetworkToHostOrder(temp);
+
+            offset += size;
         }
 
         protected void serializeDouble(byte[] buffer, ref int offset, double val)

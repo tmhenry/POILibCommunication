@@ -204,13 +204,14 @@ namespace POILibCommunication
         public override void serialize(byte[] buffer, ref int offset)
         {
             serializeInt32(buffer, ref offset, depth);
-            serializeInt32(buffer, ref offset, numPoints);
+           
 
             serializeByte(buffer, ref offset, color.R);
             serializeByte(buffer, ref offset, color.G);
             serializeByte(buffer, ref offset, color.B);
             
             serializeInt32(buffer, ref offset, shape);
+            serializeInt32(buffer, ref offset, numPoints);
 
             for (int i = 0; i < numPoints; i++)
             {
@@ -221,7 +222,7 @@ namespace POILibCommunication
         public override void deserialize(byte[] buffer, ref int offset)
         {
             deserializeInt32(buffer, ref offset, ref depth);
-            deserializeInt32(buffer, ref offset, ref numPoints);
+            
 
             byte r=0, g=0, b=0;
             deserializeByte(buffer, ref offset, ref r);
@@ -230,6 +231,8 @@ namespace POILibCommunication
             color = Color.FromRgb(r, g, b);
 
             deserializeInt32(buffer, ref offset, ref shape);
+            deserializeInt32(buffer, ref offset, ref numPoints);
+            
 
             size = numPoints * POIBeizerPathPoint.Size + fieldSize;
 
