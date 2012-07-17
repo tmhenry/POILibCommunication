@@ -52,11 +52,16 @@ namespace POILibCommunication
 
         protected void deserializeFloat(byte[] buffer, ref int offset, ref float val)
         {
-            int size = sizeof(float);
-            int temp = BitConverter.ToInt32(buffer, offset);
-            val = (float) IPAddress.NetworkToHostOrder(temp);
 
-            offset += size;
+            byte[] floatBytes = new byte[4];
+            floatBytes[0] = buffer[offset+0];
+            floatBytes[1] = buffer[offset+1];
+            floatBytes[2] = buffer[offset+2];
+            floatBytes[3] = buffer[offset + 3];
+            Array.Reverse(floatBytes);
+            val = BitConverter.ToSingle(floatBytes, 0);
+            
+            offset += sizeof(float);
         }
 
         protected void serializeDouble(byte[] buffer, ref int offset, double val)

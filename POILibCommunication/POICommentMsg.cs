@@ -266,6 +266,7 @@ namespace POILibCommunication
                 POIBeizerPathPoint point = new POIBeizerPathPoint();
                 point.deserialize(buffer, ref offset);
                 points.Add(point);
+                Console.WriteLine("Point is" + point.X + " " + point.Y);
             }
 
         }
