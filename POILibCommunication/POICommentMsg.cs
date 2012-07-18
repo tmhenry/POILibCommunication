@@ -145,14 +145,14 @@ namespace POILibCommunication
     {
         float x;
         float y;
-        float time;
+        double time;
 
-        static int size = 3 * sizeof(float);
+        static int size = 2 * sizeof(float) + sizeof(double);
         DateTime referenceTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
         public float X { get { return x; } }
         public float Y { get { return y; } }
-        public float Time { get { return time; } }
+        public double Time { get { return time; } }
         static public int Size { get { return size; } }
 
         public POIBeizerPathPoint() { }
@@ -189,6 +189,7 @@ namespace POILibCommunication
 
             //To do: process the time
             //deserializeFloat(buffer, ref offset, ref time);
+            deserializeDouble(buffer, ref offset, ref time);
         }
     }
 
@@ -267,6 +268,7 @@ namespace POILibCommunication
                 point.deserialize(buffer, ref offset);
                 points.Add(point);
                 Console.WriteLine("Point is" + point.X + " " + point.Y);
+                Console.WriteLine("time is" + point.Time);
             }
 
         }

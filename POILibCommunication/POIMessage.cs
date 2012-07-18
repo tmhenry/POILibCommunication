@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Runtime.InteropServices;
 using System.Net;
 
 namespace POILibCommunication
@@ -11,6 +11,16 @@ namespace POILibCommunication
     {
         abstract public void serialize(byte[] buffer, ref int offset);
         abstract public void deserialize(byte[] buffer, ref int offset);
+        [StructLayout(LayoutKind.Explicit)]
+        struct doubleUnion
+        {
+            [System.Runtime.InteropServices.FieldOffset(0)]
+            public double sv;
+            [System.Runtime.InteropServices.FieldOffset(0)]
+            public int u1;
+            [System.Runtime.InteropServices.FieldOffset(4)]
+            public int u2;
+        };
 
         #region Serialize and deserialize
 
@@ -52,15 +62,10 @@ namespace POILibCommunication
 
         protected void deserializeFloat(byte[] buffer, ref int offset, ref float val)
         {
+            int temp = BitConverter.ToInt32(buffer, offset);
+            temp = IPAddress.NetworkToHostOrder(temp);
+            val = BitConverter.ToSingle(BitConverter.GetBytes(temp), 0);
 
-            byte[] floatBytes = new byte[4];
-            floatBytes[0] = buffer[offset+0];
-            floatBytes[1] = buffer[offset+1];
-            floatBytes[2] = buffer[offset+2];
-            floatBytes[3] = buffer[offset + 3];
-            Array.Reverse(floatBytes);
-            val = BitConverter.ToSingle(floatBytes, 0);
-            
             offset += sizeof(float);
         }
 
@@ -72,8 +77,19 @@ namespace POILibCommunication
 
         protected void deserializeDouble(byte[] buffer, ref int offset, ref double val)
         {
-            val = BitConverter.ToDouble(buffer, offset);
-            offset += sizeof(double);
+            double doubleValue = BitConverter.ToDouble(buffer,offset);
+            doubleUnion tmp = new doubleUnion();
+            doubleUnion result = new doubleUnion();
+
+            tmp.sv = doubleValue;
+
+            result.u1 = IPAddress.NetworkToHostOrder(tmp.u2);
+            result.u2 = IPAddress.NetworkToHostOrder(tmp.u1);
+
+            val = result.sv;
+
+            offset += sizeof(float);
+            
         }
 
         #endregion
