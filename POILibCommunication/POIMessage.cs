@@ -54,7 +54,8 @@ namespace POILibCommunication
         protected void serializeFloat(byte[] buffer, ref int offset, float val)
         {
             int size = sizeof(float);
-            int temp = IPAddress.HostToNetworkOrder((int)val);
+            int temp = BitConverter.ToInt32(BitConverter.GetBytes(val), 0);
+            temp = IPAddress.HostToNetworkOrder(temp);
           
             Array.Copy(BitConverter.GetBytes(temp), 0, buffer, offset, size);
             offset += size;
