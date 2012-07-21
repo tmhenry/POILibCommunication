@@ -72,7 +72,14 @@ namespace POILibCommunication
 
         protected void serializeDouble(byte[] buffer, ref int offset, double val)
         {
-            Array.Copy(BitConverter.GetBytes(val), 0, buffer, offset, sizeof(double));
+            doubleUnion temp = new doubleUnion();
+            doubleUnion result = new doubleUnion();
+            temp.sv = val;
+
+            result.u1 = IPAddress.HostToNetworkOrder(temp.u2);
+            result.u2 = IPAddress.HostToNetworkOrder(temp.u1);
+
+            Array.Copy(BitConverter.GetBytes(result.sv), 0, buffer, offset, sizeof(double));
             offset += sizeof(double);
         }
 
@@ -89,8 +96,7 @@ namespace POILibCommunication
 
             val = result.sv;
 
-            offset += sizeof(float);
-            
+            offset += sizeof(double);
         }
 
         #endregion
