@@ -143,6 +143,10 @@ namespace POILibCommunication
                     parsePushMsg(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_WHITEBOARD_CONTROL:
+                    parseWhiteboardCtrlMsg(data, offset);
+                    break;
+
                 case POIMsgDefinition.POI_WHITEBOARD_SHOW:
                     parseWhiteboardShow(data, offset);
                     break;
@@ -311,6 +315,14 @@ namespace POILibCommunication
             comment.deserialize(buffer, ref offset);
 
             Delegates.CommentHandler.handleComment(comment);
+        }
+
+        private void parseWhiteboardCtrlMsg(byte[] buffer, int offset)
+        {
+            POIWhiteboardMsg msg = new POIWhiteboardMsg();
+            msg.deserialize(buffer, ref offset);
+
+            Delegates.WhiteboardCtrlHandler.whiteboardCtrlMsgReceived(msg);
         }
 
         private void parseWhiteboardShow(byte[] buffer, int offset)

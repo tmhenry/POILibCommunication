@@ -63,5 +63,7 @@ namespace POILibCommunication
     {
         void showWhiteBoard();
         void hideWhiteBoard();
+
+        void whiteboardCtrlMsgReceived(POIWhiteboardMsg msg);
     }
 }

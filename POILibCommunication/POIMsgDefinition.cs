@@ -148,6 +148,12 @@ namespace POILibCommunication
         Prev
     }
 
+    public enum WBCtrlType
+    {
+        Show = 0,
+        Hide
+    }
+
     public struct PresentationControlPar
     {
         public int ctrlType;
@@ -200,5 +206,7 @@ namespace POILibCommunication
         //Constants for whiteboard control msg
         public const int POI_WHITEBOARD_SHOW                  = 90;
         public const int POI_WHITEBOARD_HIDE                  = 91;
+        public const int POI_WHITEBOARD_CONTROL               = 92;
+
     }
 }
