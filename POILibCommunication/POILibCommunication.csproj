@@ -58,9 +58,11 @@
     <Compile Include="POIMsgDefinition.cs" />
     <Compile Include="POIMsgDelegateContainer.cs" />
     <Compile Include="POIMsgParser.cs" />
+    <Compile Include="POIPresentation.cs" />
     <Compile Include="POIPresentationMsg.cs" />
     <Compile Include="POIPushMsg.cs" />
     <Compile Include="POIRealtimeMsg.cs" />
+    <Compile Include="POISlide.cs" />
     <Compile Include="POITCPConnection.cs" />
     <Compile Include="POIUDPReceiver.cs" />
     <Compile Include="POIUser.cs" />

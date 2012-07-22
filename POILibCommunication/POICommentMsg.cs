@@ -22,7 +22,8 @@ namespace POILibCommunication
             POP,
             COLLAPSE,
             POSITOIN_CHANGED,
-            CONTENT_CHANGED,            
+            CONTENT_CHANGED,
+            DELETE
         }
 
         int size;
@@ -199,17 +200,25 @@ namespace POILibCommunication
         int depth;
         Color color;
         int shape;
+        int mode;
         List<POIBeizerPathPoint> points = new List<POIBeizerPathPoint>();
 
         int size;
-        int fieldSize = 4 * sizeof(int);
+        int fieldSize = 5 * sizeof(int);
 
         public int Depth { get { return depth; } }
         public int NumPoints { get { return numPoints; } }
         public Color Color { get { return color; } }
         public int Shape { get { return shape; } }
         public int Size { get { return size; } }
+        public OperationMode Mode { get { return (OperationMode)mode; } }
         public List<POIBeizerPathPoint> Points { get { return points; } }
+
+        public enum OperationMode
+        {
+            Realtime = 0,
+            All
+        }
 
         public POIBeizerPath()
         {
@@ -224,6 +233,11 @@ namespace POILibCommunication
             size += POIBeizerPathPoint.Size;
         }
 
+        public void setMode(OperationMode newMode)
+        {
+            mode = (int)newMode;
+        }
+
         public override void serialize(byte[] buffer, ref int offset)
         {
             serializeInt32(buffer, ref offset, depth);
@@ -234,7 +248,9 @@ namespace POILibCommunication
             serializeByte(buffer, ref offset, color.B);
             
             serializeInt32(buffer, ref offset, shape);
+            serializeInt32(buffer, ref offset, mode);
             serializeInt32(buffer, ref offset, numPoints);
+            
 
             for (int i = 0; i < numPoints; i++)
             {
@@ -254,6 +270,7 @@ namespace POILibCommunication
             color = Color.FromRgb(r, g, b);
 
             deserializeInt32(buffer, ref offset, ref shape);
+            deserializeInt32(buffer, ref offset, ref mode);
             deserializeInt32(buffer, ref offset, ref numPoints);
             
 
