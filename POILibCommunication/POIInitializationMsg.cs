@@ -50,28 +50,37 @@ namespace POILibCommunication
 
     public class POIWelcomeMsg : POIMessage
     {
-        int status;
+        public enum WelcomeStatus
+        {
+            Failed = 0,
+            CtrlChannelAuthenticated,
+            DataChannelAuthenticated
+        }
 
-        public int Status { get { return status; } }
+        WelcomeStatus status;
+
+        public WelcomeStatus Status { get { return status; } }
 
         const int fieldSize = sizeof(int);
         static int size = fieldSize;
         static public int Size { get { return size; } }
 
         public POIWelcomeMsg() { }
-        public POIWelcomeMsg(int myStatus)
+        public POIWelcomeMsg(WelcomeStatus myStatus)
         {
             status = myStatus;
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
-            deserializeInt32(buffer, ref offset, ref status);
+            int statusInt = 0;
+            deserializeInt32(buffer, ref offset, ref statusInt);
+            status = (WelcomeStatus)statusInt;
         }
 
         public override void serialize(byte[] buffer, ref int offset)
         {
-            serializeInt32(buffer, ref offset, status);
+            serializeInt32(buffer, ref offset, (int)status);
         }
 
         public override byte[] getPacket()

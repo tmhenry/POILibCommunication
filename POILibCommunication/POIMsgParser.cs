@@ -135,6 +135,10 @@ namespace POILibCommunication
                     parsePresControlMsg(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_PRESENTATION_CONTENT:
+                    parsePresContentMsg(data, offset);
+                    break;
+
                 case POIMsgDefinition.POI_USER_COMMENTS:
                     parseUserComments(data, offset);
                     break;
@@ -307,6 +311,12 @@ namespace POILibCommunication
             msg.deserialize(buffer, ref offset);
 
             Delegates.PresCtrlHandler.presCtrlMsgReceived(msg);
+        }
+
+        private void parsePresContentMsg(byte[] buffer, int offset)
+        {
+            POIPresentation presentation = new POIPresentation();
+            presentation.deserialize(buffer, ref offset);
         }
 
         private void parseUserComments(byte[] buffer, int offset)

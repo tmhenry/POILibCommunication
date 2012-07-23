@@ -9,12 +9,14 @@ using POILibCommunication;
 
 namespace POILibCommunication
 {
-    public class POIPresentation: POISerializable
+    public class POIPresentation: POIMessage
     {
         List<POISlide> slideList = new List<POISlide>();
+        int presId = 3;
+
         Int64 size;
 
-        const int fieldSize = sizeof(int);
+        const int fieldSize = 2*sizeof(int);
 
         public int Count { get { return slideList.Count; } }
 
@@ -69,6 +71,7 @@ namespace POILibCommunication
         public override void serialize(byte[] buffer, ref int offset)
         {
             //Serialize number of slides
+            serializeInt32(buffer, ref offset, presId);
             serializeInt32(buffer, ref offset, slideList.Count);
 
             foreach (POISlide slide in slideList)
@@ -82,6 +85,9 @@ namespace POILibCommunication
             size = 0;
             slideList = new List<POISlide>();
 
+            deserializeInt32(buffer, ref offset, ref presId);
+            size += sizeof(int);
+
             //Deserialize the number of slides
             int numSlides = 0;
             deserializeInt32(buffer, ref offset, ref numSlides);
@@ -94,6 +100,15 @@ namespace POILibCommunication
 
                 size += slide.Size;
             }
+        }
+
+        public override byte[] getPacket()
+        {
+            byte[] packet = new byte[size];
+            int offset = 0;
+            serialize(packet, ref offset);
+
+            return composePacket(POIMsgDefinition.POI_PRESENTATION_CONTENT, packet);
         }
     }
 }

@@ -209,16 +209,19 @@ namespace POILibCommunication
             int userType = (int)par.UserType;
             int conType = (int)par.ConnType;
 
+            POIWelcomeMsg.WelcomeStatus status = POIWelcomeMsg.WelcomeStatus.Failed;
             
             if (conType == POIMsgDefinition.POI_CONTROL_CHANNEL)
             {
                 //POIGlobalVar.SystemDataHandler.CtrlChannelAuthenticated(this);
                 Type = POIMsgParser.ParserType.Control;
+                status = POIWelcomeMsg.WelcomeStatus.CtrlChannelAuthenticated;                
             }
             else if (conType == POIMsgDefinition.POI_DATA_CHANNEL)
             {
                 //POIGlobalVar.SystemDataHandler.DataChannelAuthenticated(this);
                 Type = POIMsgParser.ParserType.Data;
+                status = POIWelcomeMsg.WelcomeStatus.DataChannelAuthenticated;
             }
             
 
@@ -234,11 +237,11 @@ namespace POILibCommunication
             //Call connection authenticated callback
             connectionCBDelegate.ConnectionAuthenticated(this);
 
-            
 
             //Send back the welcome message
-            POIWelcomeMsg welcomeMsg = new POIWelcomeMsg(1);
+            POIWelcomeMsg welcomeMsg = new POIWelcomeMsg(status);
             SendData(welcomeMsg.getPacket());
+            
             
         }
     }

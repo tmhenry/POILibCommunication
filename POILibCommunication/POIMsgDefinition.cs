@@ -192,6 +192,7 @@ namespace POILibCommunication
 
         //Constants for Presentation control
         public const int POI_PRESENTATION_CONTROL             = 30;
+        public const int POI_PRESENTATION_CONTENT             = 31;
 
         //Constants for user comments
         public const int POI_USER_COMMENTS                    = 50;
