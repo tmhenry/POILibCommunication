@@ -109,7 +109,7 @@ namespace POILibCommunication
 
             try
             {
-                byte[] data = File.ReadAllBytes(source.ToString());
+                byte[] data = File.ReadAllBytes(source.LocalPath);
                 int dataSize = data.Length;
 
                 serializeInt32(buffer, ref offset, dataSize);

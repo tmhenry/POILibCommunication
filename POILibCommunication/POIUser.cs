@@ -104,6 +104,10 @@ namespace POILibCommunication
                     CtrlChannel.SendData(myData);
                     break;
 
+                case ConType.TCP_DATA:
+                    DataChannel.SendData(myData);
+                    break;
+
                 default:
                     break;
             }
