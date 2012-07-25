@@ -24,16 +24,20 @@ namespace POILibCommunication
 
     public class POISlide : POISerializable
     {
-        protected Uri source;
+        //Data members
+        protected int index;
         protected List<int> durationList;
 
         protected SlideContentFormat format;
         protected SlideType type;
 
-        Int64 size;
-        const int fieldSizeStatic = 3 * sizeof(int);
-        const int fieldSizeAnimation = 4 * sizeof(int);
+        protected Int64 size;
+        protected const int fieldSizeStatic = 4 * sizeof(int);
+        protected const int fieldSizeAnimation = 5 * sizeof(int);
 
+        protected POIPresentation parentPresentation;
+
+        //Properties
         public Int64 Size
         {
             get { return size; }
@@ -41,40 +45,44 @@ namespace POILibCommunication
 
         public Uri Source
         {
-            get { return source; }
-            set { source = value; }
+            get 
+            {
+                String uri = parentPresentation.BasePath + @"/" + index;
+
+                switch (format)
+                {
+                    case SlideContentFormat.JPEG:
+                        uri += @".jpg";
+                        break;
+
+                    case SlideContentFormat.PNG:
+                        uri += @".PNG";
+                        break;
+
+                    case SlideContentFormat.WMV:
+                        uri += @".wmv";
+                        break;
+
+                    default:
+                        throw (new Exception { });
+                }
+
+                return new Uri(uri);
+            }
         }
 
-        public POISlide()
+        public int Index
+        {
+            get { return index; }
+        }
+
+        //Functions
+        public POISlide(POIPresentation parent)
         {
             size = 0;
+            parentPresentation = parent;
         }
 
-        public POISlide(String uriName)
-        {
-            type = SlideType.Static;
-
-            source = new Uri(uriName);
-            durationList = new List<int>();
-
-            size = fieldSizeStatic;
-
-            FileInfo info = new FileInfo(uriName);
-            size += info.Length;
-        }
-
-        public POISlide(String uriName, List<int> myDurationList)
-        {
-            type = SlideType.Animation;
-
-            source = new Uri(uriName);
-            durationList = myDurationList;
-
-            size = fieldSizeAnimation + durationList.Count * sizeof(int);
-
-            FileInfo info = new FileInfo(uriName);
-            size += info.Length;
-        }
 
         public int GetDurationAtIndex(int index)
         {
@@ -90,6 +98,9 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
+            //Serialize the index
+            serializeInt32(buffer, ref offset, index);
+
             //Serialize the slide type
             serializeInt32(buffer, ref offset, (int)type);
 
@@ -109,7 +120,7 @@ namespace POILibCommunication
 
             try
             {
-                byte[] data = File.ReadAllBytes(source.LocalPath);
+                byte[] data = File.ReadAllBytes(Source.LocalPath);
                 int dataSize = data.Length;
 
                 serializeInt32(buffer, ref offset, dataSize);
@@ -126,6 +137,9 @@ namespace POILibCommunication
         public override void deserialize(byte[] buffer, ref int offset)
         {
             size = 0;
+
+            //Deserialize the index
+            deserializeInt32(buffer, ref offset, ref index);
 
             int slideType = 0;
             deserializeInt32(buffer, ref offset, ref slideType);
@@ -163,31 +177,12 @@ namespace POILibCommunication
             deserializeInt32(buffer, ref offset, ref dataSize);
             size += sizeof(int) + dataSize;
 
-            String uri = Directory.GetCurrentDirectory() + @"/";
-            uri += @"test";
-
-            switch (format)
-            {
-                case SlideContentFormat.JPEG:
-                    uri += @".jpg";
-                    break;
-
-                case SlideContentFormat.PNG:
-                    uri += @".png";
-                    break;
-
-                case SlideContentFormat.WMV:
-                    uri += @".wmv";
-                    break;
-
-                default:
-                    throw (new Exception { });
-            }
+            
 
             //Get the data size
             try
             {
-                FileStream myStream = new FileStream(uri, FileMode.Create);
+                FileStream myStream = new FileStream(Source.LocalPath, FileMode.Create);
                 myStream.Write(buffer, offset, dataSize);
                 myStream.Close();
             }
@@ -198,6 +193,41 @@ namespace POILibCommunication
 
             //Increase the handled offset
             offset += dataSize;
+        }
+    }
+
+    public class POIStaticSlide: POISlide
+    {
+        public POIStaticSlide(int myIndex, POIPresentation parent)
+            :base(parent)
+        {
+            index = myIndex;
+
+            type = SlideType.Static;
+            format = SlideContentFormat.PNG;
+            durationList = new List<int>();
+
+            size = fieldSizeStatic;
+
+            FileInfo info = new FileInfo(Source.LocalPath);
+            size += info.Length;
+        }
+    }
+
+    public class POIAnimationSlide: POISlide
+    {
+        public POIAnimationSlide(List<int> myDurationList, int myIndex, POIPresentation parent)
+            :base(parent)
+        {
+            index = myIndex;
+
+            type = SlideType.Animation;
+            durationList = myDurationList;
+            format = SlideContentFormat.WMV;
+            size = fieldSizeAnimation + durationList.Count * sizeof(int);
+
+            FileInfo info = new FileInfo(Source.LocalPath);
+            size += info.Length;
         }
     }
 }

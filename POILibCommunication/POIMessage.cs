@@ -45,6 +45,13 @@ namespace POILibCommunication
             offset += 1;
         }
 
+        protected void serializeByteArray(byte[] buffer, ref int offset, byte[] array)
+        {
+            Array.Copy(array, 0, buffer, offset, array.Length);
+            offset += array.Length;
+        }
+
+
         protected void deserializeByte(byte[] buffer, ref int offset, ref byte val)
         {
             val = buffer[offset];
