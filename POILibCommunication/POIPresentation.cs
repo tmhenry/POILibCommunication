@@ -34,7 +34,7 @@ namespace POILibCommunication
                 return size;
             }
         }
-        public String BasePath { get; set; }
+        public String BasePath { get { return @"" + presId; } }
 
         //Functions
         public void UpdateSize()
@@ -61,13 +61,10 @@ namespace POILibCommunication
 
         public void LoadPresentationFromStorage()
         {
-            String path = Directory.GetCurrentDirectory();
-            BasePath = path + @"/" + presId;
-
             //A fake presentation info
             info[@"name"] = @"Test";
             info[@"presentor"] = @"Gary Chan";
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 11; i++)
             {
                 POISlide slide = new POIStaticSlide(i, this);
                 Insert(slide);
@@ -78,9 +75,9 @@ namespace POILibCommunication
             duration.Add(500);
             duration.Add(500);
             duration.Add(500);
-            POISlide slide2 = new POIAnimationSlide(duration, 6, this);
+            //POISlide slide2 = new POIAnimationSlide(duration, 12, this);
 
-            Insert(slide2);
+            //Insert(slide2);
         }
 
         public void ParseIntoSlides(String slidesInfoJson)

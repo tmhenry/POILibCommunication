@@ -47,7 +47,7 @@ namespace POILibCommunication
         {
             get 
             {
-                String uri = parentPresentation.BasePath + @"/" + index;
+                String uri = POIArchive.ArchiveHome + parentPresentation.BasePath + @"/" + index;
 
                 switch (format)
                 {
