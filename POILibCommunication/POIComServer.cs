@@ -13,7 +13,7 @@ using System.Windows;
 
 namespace POILibCommunication
 {
-    public class POIComServer : POITCPConnectionCBDelegate
+    public class POIComServer : POIInitializeClientMsgCB, POITCPConnectionCBDelegate
     {
         private static object broadCastLock = new object();
 
@@ -22,8 +22,6 @@ namespace POILibCommunication
 
         int maxClientCount = 5;
 
-        int TCPDataControlMsgSize = 2 * sizeof(Int32);
-
         public POIBroadcast BroadcastChannel { get; set; }
         public POIUDPReceiver UDPServer { get; set; }
 
@@ -31,14 +29,10 @@ namespace POILibCommunication
 
         public void ConnectionEnded(POITCPConnection connection)
         {
-            POIUser user;
+            POIUser user = connection.AssociatedUser;
 
-            //If the user already exists
-            if (POIGlobalVar.UserProfiles.ContainsKey(connection.Address))
+            if (user != null)
             {
-                //Set the control channel
-                user = POIGlobalVar.UserProfiles[connection.Address];
-
                 if (connection.Type == POIMsgParser.ParserType.Control)
                 {
                     //Reset the user status
@@ -57,21 +51,8 @@ namespace POILibCommunication
             {
                 Console.WriteLine(@"Error: no user existed!");
             }
-
-            
         }
 
-        public void ConnectionAuthenticated(POITCPConnection connection)
-        {
-            if (connection.Type == POIMsgParser.ParserType.Control)
-            {
-                CtrlChannelAuthenticated(connection);
-            }
-            else if (connection.Type == POIMsgParser.ParserType.Data)
-            {
-                DataChannelAuthenticated(connection);
-            }
-        }
 
         #endregion
 
@@ -110,7 +91,10 @@ namespace POILibCommunication
 
             //Start authenticating the new connection
             POITCPConnection connection = new POITCPConnection(e.AcceptSocket);
+            
+            connection.initClientMsgDelegate = this;
             connection.connectionCBDelegate = this;
+            connection.StartReceiving();
 
           
             //If there is still room for new clients, start another round of accepting.
@@ -127,69 +111,82 @@ namespace POILibCommunication
             }
         }
 
-        public void CtrlChannelAuthenticated(POITCPConnection connection)
+        //Initialize the client
+        public void helloMsgReceived(POIHelloMsg par, POITCPConnection connection)
         {
-            POIUser user;
+            //Notify data handler that authentication has been done
+            //Proper CB functions are set here
+            int userType = (int)par.UserType;
+            int conType = (int)par.ConnType;
+            string userName = par.UserName;
 
-            //If the user already exists
-            if (POIGlobalVar.UserProfiles.ContainsKey(connection.Address))
+            //Handle the authentication
+
+            POIWelcomeMsg.WelcomeStatus status = POIWelcomeMsg.WelcomeStatus.Failed;
+
+            if (conType == POIMsgDefinition.POI_CONTROL_CHANNEL)
             {
-                //Set the control channel
-                user = POIGlobalVar.UserProfiles[connection.Address];
-            }
-            else //User does not exists
-            {
-                user = new POIUser();
-                POIGlobalVar.UserProfiles.Add(connection.Address, user);
-                user.UserID = connection.Address;
-            }
-
-            //Setup connection delegates
-            connection.Delegates = user;
-
-            user.CtrlChannel = connection;
-
-            if (user.Status == POIUser.ConnectionStatus.Disconnected)
-            {
-                user.Status = POIUser.ConnectionStatus.Connected;
-            }
-
-            Console.WriteLine(@"Oh yeah");
-
-            try
-            {
-                //POIGlobalVar.SystemKernel.Handle_UserJoin(new POIUserEventArgs(user, new Point(0, 0)));
-                POIGlobalVar.SystemKernel.HandleUserJoin(user);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-            
-        }
-
-        public void DataChannelAuthenticated(POITCPConnection connection)
-        {
-            Console.WriteLine(@"Data connection authenticated!");
-
-            //If the user already exists
-            if (POIGlobalVar.UserProfiles.ContainsKey(connection.Address))
-            {
-                //If the control channel is already connected
-                POIUser user = POIGlobalVar.UserProfiles[connection.Address];
-                if (user.Status == POIUser.ConnectionStatus.Connected)
+                //Check if user already exists, create if not exists
+                POIUser user;
+                if (POIGlobalVar.UserProfiles.ContainsKey(userName))
                 {
-                    connection.Delegates = user;
-                    user.DataChannel = connection;
+                    user = POIGlobalVar.UserProfiles[userName];
+                }
+                else
+                {
+                    user = new POIUser();
+                    POIGlobalVar.UserProfiles[userName] = user;
+                }
 
-                    connection.InitPayloadBufferForDataChannel();
+                //Initialize the user parameters
+                user.UserID = userName;
+                user.UserPrivilege = (POIUser.Privilege)userType;
+                user.CtrlChannel = connection;
+
+                if (user.Status == POIUser.ConnectionStatus.Disconnected)
+                {
+                    user.Status = POIUser.ConnectionStatus.Connected;
+                }
+                
+                connection.Type = POIMsgParser.ParserType.Control;
+                connection.Delegates = user;
+                connection.AssociatedUser = user;
+
+                try
+                {
+                    POIGlobalVar.SystemKernel.HandleUserJoin(user);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+                status = POIWelcomeMsg.WelcomeStatus.CtrlChannelAuthenticated;
+            }
+            else if (conType == POIMsgDefinition.POI_DATA_CHANNEL)
+            {
+                if (POIGlobalVar.UserProfiles.ContainsKey(userName))
+                {
+                    POIUser user = POIGlobalVar.UserProfiles[userName];
+                    if (user.Status == POIUser.ConnectionStatus.Connected)
+                    {
+                        user.DataChannel = connection;
+
+                        connection.InitPayloadBufferForDataChannel();
+                        connection.Type = POIMsgParser.ParserType.Data;
+                        connection.Delegates = user;
+                        connection.AssociatedUser = user;
+
+                        status = POIWelcomeMsg.WelcomeStatus.DataChannelAuthenticated;
+                    }
                 }
             }
-            else //Drop the connection
-            {
-                connection.Disconnect();
-            }
+
+            //Send back the welcome message
+            POIWelcomeMsg welcomeMsg = new POIWelcomeMsg(status);
+            connection.SendData(welcomeMsg.getPacket());
         }
+
 
         private void RemoveConnection(Socket mySocket)
         {

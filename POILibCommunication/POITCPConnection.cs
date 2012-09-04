@@ -11,10 +11,9 @@ namespace POILibCommunication
     public interface POITCPConnectionCBDelegate
     {
         void ConnectionEnded(POITCPConnection con);
-        void ConnectionAuthenticated(POITCPConnection con);
     }
 
-    public class POITCPConnection: POIMsgParser, POIInitializeClientMsgCB
+    public class POITCPConnection: POIMsgParser
     {
         public POITCPConnectionCBDelegate connectionCBDelegate { get; set; }
 
@@ -43,10 +42,10 @@ namespace POILibCommunication
             //Get the IPAddress
             IPEndPoint remoteIPEP = mySocket.RemoteEndPoint as IPEndPoint;
             Address = remoteIPEP.Address.ToString();
+        }
 
-            //msgParser.initClientMsgDelegate = this;
-            initClientMsgDelegate = this;
-
+        public void StartReceiving()
+        {
             //Start receiving
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.SetBuffer(TCP_ControlBuffer, 0, 1400);
@@ -152,7 +151,15 @@ namespace POILibCommunication
                 }
 
                 //Start another round of async read
-                mySocket.ReceiveAsync(args);
+                try
+                {
+                    mySocket.ReceiveAsync(args);
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine("Error in TCP receive!");
+                }
+                
 
             }
             else
@@ -197,52 +204,6 @@ namespace POILibCommunication
         public void InitPayloadBufferForDataChannel()
         {
             Payload = new byte[maxDataPayloadSize];
-        }
-
-        /*
-         * Delegate functions for POI initialization protocol
-         */
-        public void helloMsgReceived(POIHelloMsg par)
-        {
-            //Notify data handler that authentication has been done
-            //Proper CB functions are set here
-            int userType = (int)par.UserType;
-            int conType = (int)par.ConnType;
-
-            POIWelcomeMsg.WelcomeStatus status = POIWelcomeMsg.WelcomeStatus.Failed;
-            
-            if (conType == POIMsgDefinition.POI_CONTROL_CHANNEL)
-            {
-                //POIGlobalVar.SystemDataHandler.CtrlChannelAuthenticated(this);
-                Type = POIMsgParser.ParserType.Control;
-                status = POIWelcomeMsg.WelcomeStatus.CtrlChannelAuthenticated;                
-            }
-            else if (conType == POIMsgDefinition.POI_DATA_CHANNEL)
-            {
-                //POIGlobalVar.SystemDataHandler.DataChannelAuthenticated(this);
-                Type = POIMsgParser.ParserType.Data;
-                status = POIWelcomeMsg.WelcomeStatus.DataChannelAuthenticated;
-            }
-            
-
-            if (userType == POIMsgDefinition.POI_HELLOTYPE_COMMANDER)
-            {
-                privilegeLevel = POIMsgParser.Privilege.Commander;
-            }
-            else if (userType == POIMsgDefinition.POI_HELLOTYPE_VIEWER)
-            {
-                privilegeLevel = POIMsgParser.Privilege.Viewer;
-            }
-
-            //Call connection authenticated callback
-            connectionCBDelegate.ConnectionAuthenticated(this);
-
-
-            //Send back the welcome message
-            POIWelcomeMsg welcomeMsg = new POIWelcomeMsg(status);
-            SendData(welcomeMsg.getPacket());
-            
-            
         }
     }
 }

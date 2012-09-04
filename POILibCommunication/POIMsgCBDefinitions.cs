@@ -17,7 +17,7 @@ namespace POILibCommunication
 
     public interface POIInitializeClientMsgCB
     {
-        void helloMsgReceived(POIHelloMsg par);
+        void helloMsgReceived(POIHelloMsg par, POITCPConnection connection);
     }
 
     //Handle broadcast type of message sent from server
@@ -65,5 +65,10 @@ namespace POILibCommunication
         void hideWhiteBoard();
 
         void whiteboardCtrlMsgReceived(POIWhiteboardMsg msg);
+    }
+
+    public interface POISessionCtrlMsgCB
+    {
+        void sessionCtrlMsgReceived(POISessionMsg msg, POIUser user);
     }
 }

@@ -14,6 +14,9 @@ namespace POILibCommunication
         public POIMsgDelegateContainer Delegates { get; set; }
         public POIInitializeClientMsgCB initClientMsgDelegate { get; set; }
 
+
+        public POIUser AssociatedUser { get; set; }
+
         public enum Privilege
         {
             Authentication = 0,
@@ -159,6 +162,10 @@ namespace POILibCommunication
                     parseWhiteboardHide(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_SESSION_CONTROL:
+                    parseSessionCtrlMsg(data, offset);
+                    break;
+
             }
                               
         }
@@ -273,14 +280,20 @@ namespace POILibCommunication
 
         private void parseHelloMsg(byte[] buffer, int offset)
         {
-            if (privilegeLevel < Privilege.Authentication) return;
-
             POIHelloMsg msg = new POIHelloMsg();
             msg.deserialize(buffer, ref offset);
 
             Console.WriteLine(@"Hello");
- 
-            initClientMsgDelegate.helloMsgReceived(msg);
+
+            try
+            {
+                initClientMsgDelegate.helloMsgReceived(msg, this as POITCPConnection);
+            }
+            catch
+            {
+                Console.WriteLine("Error in calling hello msg callback!");
+            }
+            
         }
 
         private void parseWelcomeMsg(byte[] buffer, int offset)
@@ -305,12 +318,27 @@ namespace POILibCommunication
 
         private void parsePresControlMsg(byte[] buffer, int offset)
         {
-            if (privilegeLevel < Privilege.Commander) return;
+            if (AssociatedUser != null && AssociatedUser.UserPrivilege >= POIUser.Privilege.Authentication)
+            {
+                POIPresCtrlMsg msg = new POIPresCtrlMsg();
+                msg.deserialize(buffer, ref offset);
 
-            POIPresCtrlMsg msg = new POIPresCtrlMsg();
-            msg.deserialize(buffer, ref offset);
+                try
+                {
+                    Delegates.PresCtrlHandler.presCtrlMsgReceived(msg);
+                }
+                catch
+                {
+                    Console.WriteLine("No proper handler registered for presentation control message.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Not proper privilege for the user!");
+            }
 
-            Delegates.PresCtrlHandler.presCtrlMsgReceived(msg);
+            
+            
         }
 
         private void parsePresContentMsg(byte[] buffer, int offset)
@@ -324,7 +352,14 @@ namespace POILibCommunication
             POIComment comment = new POIComment();
             comment.deserialize(buffer, ref offset);
 
-            Delegates.CommentHandler.handleComment(comment);
+            try
+            {
+                Delegates.CommentHandler.handleComment(comment);
+            }
+            catch
+            {
+                Console.WriteLine("No proper delegate for user comment!");
+            }
         }
 
         private void parseWhiteboardCtrlMsg(byte[] buffer, int offset)
@@ -332,7 +367,14 @@ namespace POILibCommunication
             POIWhiteboardMsg msg = new POIWhiteboardMsg();
             msg.deserialize(buffer, ref offset);
 
-            Delegates.WhiteboardCtrlHandler.whiteboardCtrlMsgReceived(msg);
+            try
+            {
+                Delegates.WhiteboardCtrlHandler.whiteboardCtrlMsgReceived(msg);
+            }
+            catch
+            {
+                Console.WriteLine("No proper delegate for whiteboard control.");
+            }
         }
 
         private void parseWhiteboardShow(byte[] buffer, int offset)
@@ -349,6 +391,22 @@ namespace POILibCommunication
             msg.deserialize(buffer, ref offset);
 
             Delegates.WhiteboardCtrlHandler.hideWhiteBoard();
+        }
+
+        private void parseSessionCtrlMsg(byte[] buffer, int offset)
+        {
+            POISessionMsg msg = new POISessionMsg();
+            msg.deserialize(buffer, ref offset);
+
+            try
+            {
+                Delegates.SessionHandler.sessionCtrlMsgReceived(msg, AssociatedUser);
+            }
+            catch
+            {
+                Console.WriteLine("No proper delegate for session control.");
+            }
+            
         }
 
     }

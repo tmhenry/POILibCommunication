@@ -36,8 +36,6 @@ namespace POILibCommunication
 
         //Variables for UDP connection
         private IPEndPoint __UDPEndPoint;
-        
-        
 
         #endregion
 
@@ -58,6 +56,15 @@ namespace POILibCommunication
             get { return __UDPEndPoint; }
             set { __UDPEndPoint = value; }
         }
+
+        public enum Privilege
+        {
+            Authentication = 0,
+            Viewer,
+            Commander
+        }
+
+        public Privilege UserPrivilege { get; set; }
 
         #endregion
 

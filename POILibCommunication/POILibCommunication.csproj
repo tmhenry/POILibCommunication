@@ -64,10 +64,12 @@
     <Compile Include="POIPresentationMsg.cs" />
     <Compile Include="POIPushMsg.cs" />
     <Compile Include="POIRealtimeMsg.cs" />
+    <Compile Include="POISessionMsg.cs" />
     <Compile Include="POISlide.cs" />
     <Compile Include="POITCPConnection.cs" />
     <Compile Include="POIUDPReceiver.cs" />
     <Compile Include="POIUser.cs" />
+    <Compile Include="POIWebService.cs" />
     <Compile Include="POIWhiteboardMsg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

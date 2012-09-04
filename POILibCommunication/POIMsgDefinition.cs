@@ -162,6 +162,17 @@ namespace POILibCommunication
 
     #endregion
 
+    #region enum definitions for session control message
+
+    public enum SessionCtrlType
+    {
+        Start = 0,
+        End,
+        Join,
+        Leave
+    }
+
+    #endregion
 
     static class POIMsgDefinition
     {
@@ -208,6 +219,9 @@ namespace POILibCommunication
         public const int POI_WHITEBOARD_SHOW                  = 90;
         public const int POI_WHITEBOARD_HIDE                  = 91;
         public const int POI_WHITEBOARD_CONTROL               = 92;
+
+        //Constants for session management
+        public const int POI_SESSION_CONTROL                  = 100;
 
     }
 }
