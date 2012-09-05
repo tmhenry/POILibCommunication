@@ -62,9 +62,9 @@ namespace POILibCommunication
         public void LoadPresentationFromStorage()
         {
             //A fake presentation info
-            info[@"name"] = @"Test";
-            info[@"presentor"] = @"Gary Chan";
-            for (int i = 0; i < 11; i++)
+            info[@"name"] = @"Pitch for Paul";
+            info[@"presentor"] = @"POI";
+            for (int i = 0; i < 19; i++)
             {
                 POISlide slide = new POIStaticSlide(i, this);
                 Insert(slide);
