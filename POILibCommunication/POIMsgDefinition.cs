@@ -174,6 +174,17 @@ namespace POILibCommunication
 
     #endregion
 
+    #region enum definitions for pointer control message
+
+    public enum PointerCtrlType
+    {
+        Start = 0,
+        Move,
+        End
+    }
+
+    #endregion
+
     static class POIMsgDefinition
     {
         //Global constants
@@ -222,6 +233,9 @@ namespace POILibCommunication
 
         //Constants for session management
         public const int POI_SESSION_CONTROL                  = 100;
+
+        //Constants for laser pointer message
+        public const int POI_POINTER_CONTROL                  = 110;
 
     }
 }

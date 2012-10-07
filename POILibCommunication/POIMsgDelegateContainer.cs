@@ -16,5 +16,6 @@ namespace POILibCommunication
         public POIWhiteBoardMsgCB WhiteboardCtrlHandler { get; set; }
         public POICommentCB CommentHandler { get; set; }
         public POISessionCtrlMsgCB SessionHandler { get; set; }
+        public POIPointerCtrlMsgCB PointerHandler { get; set; }
     }
 }

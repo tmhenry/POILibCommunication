@@ -60,6 +60,7 @@
     <Compile Include="POIMsgDefinition.cs" />
     <Compile Include="POIMsgDelegateContainer.cs" />
     <Compile Include="POIMsgParser.cs" />
+    <Compile Include="POIPointerMsg.cs" />
     <Compile Include="POIPresentation.cs" />
     <Compile Include="POIPresentationMsg.cs" />
     <Compile Include="POIPushMsg.cs" />

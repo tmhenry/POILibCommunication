@@ -71,4 +71,9 @@ namespace POILibCommunication
     {
         void sessionCtrlMsgReceived(POISessionMsg msg, POIUser user);
     }
+
+    public interface POIPointerCtrlMsgCB
+    {
+        void pointerCtrlMsgReceived(POIPointerMsg msg);
+    }
 }

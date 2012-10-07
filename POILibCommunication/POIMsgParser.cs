@@ -166,6 +166,10 @@ namespace POILibCommunication
                     parseSessionCtrlMsg(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_POINTER_CONTROL:
+                    parsePointerCtrlMsg(data, offset);
+                    break;
+
             }
                               
         }
@@ -406,7 +410,22 @@ namespace POILibCommunication
             {
                 Console.WriteLine("No proper delegate for session control.");
             }
-            
+        }
+
+        private void parsePointerCtrlMsg(byte[] buffer, int offset)
+        {
+            POIPointerMsg msg = new POIPointerMsg();
+            msg.deserialize(buffer, ref offset);
+
+            try
+            {
+                //Pass the data to the pointer handler
+                Delegates.PointerHandler.pointerCtrlMsgReceived(msg);
+            }
+            catch
+            {
+                Console.WriteLine("No proper delegate for pointer control.");
+            }
         }
 
     }
