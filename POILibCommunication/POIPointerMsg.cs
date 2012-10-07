@@ -9,9 +9,10 @@ namespace POILibCommunication
     {
         float x;
         float y;
+        double timestamp;
 
         PointerCtrlType type;
-        int size = 2 * sizeof(float) + sizeof(int);
+        int size = 2 * sizeof(float) + sizeof(int) + sizeof(double);
 
         public PointerCtrlType Type
         {
@@ -21,16 +22,18 @@ namespace POILibCommunication
         public float X { get { return x; } }
         public float Y { get { return y; } }
         public int Size { get { return size; } }
+        public double Timestamp { get { return timestamp; } }
 
         //Constructor
         public POIPointerMsg() { }
 
         //Constructor
-        public POIPointerMsg(PointerCtrlType myType, float myX, float myY)
+        public POIPointerMsg(PointerCtrlType myType, float myX, float myY, double time)
         {
             type = myType;
             x = myX;
             y = myY;
+            timestamp = time;
         }
 
         //Serializer
@@ -39,6 +42,7 @@ namespace POILibCommunication
             serializeInt32(buffer, ref offset, (int)Type);
             serializeFloat(buffer, ref offset, x);
             serializeFloat(buffer, ref offset, y);
+            serializeDouble(buffer, ref offset, timestamp);
         }
 
         //Deserializer
@@ -50,6 +54,7 @@ namespace POILibCommunication
 
             deserializeFloat(buffer, ref offset, ref x);
             deserializeFloat(buffer, ref offset, ref y);
+            deserializeDouble(buffer, ref offset, ref timestamp);
         }
 
         public override byte[] getPacket()
