@@ -48,7 +48,7 @@ namespace POILibCommunication
             get 
             {
                 String uri = POIArchive.ArchiveHome + parentPresentation.BasePath + @"/" + index;
-
+                
                 switch (format)
                 {
                     case SlideContentFormat.JPEG:
@@ -56,7 +56,7 @@ namespace POILibCommunication
                         break;
 
                     case SlideContentFormat.PNG:
-                        uri += @".PNG";
+                        uri += @".png";
                         break;
 
                     case SlideContentFormat.WMV:
