@@ -29,12 +29,12 @@ namespace POILibCommunication
         int size;
         int fieldSize;
 
-        public int Depth { get { return depth; } }
-        public OperationMode Mode { get { return mode; } }
-        public float X { get { return x; } }
-        public float Y { get { return y; } }
+        public int Depth { get { return depth; } set { depth = value; } }
+        public OperationMode Mode { get { return mode; } set { mode = value; } }
+        public float X { get { return x; } set { x = value; } }
+        public float Y { get { return y; } set { y = value; } }
         public int Size { get { return size; } }
-        public String Msg { get { return msg; } }
+        public String Msg { get { return msg; } set { msg = value; } }
 
         public POITextComment() { }
 
@@ -45,6 +45,15 @@ namespace POILibCommunication
 
             fieldSize = 2 * sizeof(int);
             size = fieldSize;
+        }
+
+        public void calculateSize()
+        {
+            System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+            length = encoding.GetByteCount(msg);
+
+            fieldSize = 2 * sizeof(float) + 3 * sizeof(int);
+            size = fieldSize + length;
         }
 
         public POITextComment(int myDepth, float myX, float myY, String myMsg)
@@ -151,8 +160,8 @@ namespace POILibCommunication
         static int size = 2 * sizeof(float) + sizeof(double);
         DateTime referenceTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 
-        public float X { get { return x; } }
-        public float Y { get { return y; } }
+        public float X { get { return x; } set { x = value; } }
+        public float Y { get { return y; } set { y = value; } }
         public double Time { get { return time; } }
         static public int Size { get { return size; } }
 
@@ -206,18 +215,23 @@ namespace POILibCommunication
         int size;
         int fieldSize = 5 * sizeof(int);
 
-        public int Depth { get { return depth; } }
-        public int NumPoints { get { return numPoints; } }
-        public Color Color { get { return color; } }
-        public int Shape { get { return shape; } }
+        public int Depth { get { return depth; } set { depth = value; } }
+        public int NumPoints { get { return numPoints; } set { numPoints = value; } }
+        public Color Color { get { return color; } set { color = value; } }
+        public int Shape { get { return shape; } set { shape = value; } }
         public int Size { get { return size; } }
         public OperationMode Mode { get { return (OperationMode)mode; } }
-        public List<POIBeizerPathPoint> Points { get { return points; } }
+        public List<POIBeizerPathPoint> Points { get { return points; } set { points = value; } }
 
         public enum OperationMode
         {
             Realtime = 0,
             All
+        }
+
+        public void calculateSize()
+        {
+            size = numPoints * POIBeizerPathPoint.Size + fieldSize;
         }
 
         public POIBeizerPath()
@@ -305,15 +319,33 @@ namespace POILibCommunication
 
         int fieldSize = 3 * sizeof(int);
 
-        public int NumText { get { return numText; } }
-        public int NumBeizerPath { get { return numBeizerPath; } }
-        public List<POIBeizerPath> Paths { get { return paths; } }
-        public List<POITextComment> Texts { get { return texts; } }
+        public int FrameNum { get { return frameNum; } set { frameNum = value; } }
+        public int NumText { get { return numText; } set { numText = value; } }
+        public int NumBeizerPath { get { return numBeizerPath; } set { numBeizerPath = value; } }
+        public List<POIBeizerPath> Paths { get { return paths; } set { paths = value; } }
+        public List<POITextComment> Texts { get { return texts; } set { texts = value; } }
         public int Size { get { return size; } }
 
         public POIComment()
         {
             size = fieldSize;
+        }
+
+        public void calculateSize()
+        {
+            size = fieldSize;
+
+            foreach (POIBeizerPath path in paths)
+            {
+                path.calculateSize();
+                size += path.Size;
+            }
+
+            foreach (POITextComment text in texts)
+            {
+                text.calculateSize();
+                size += text.Size;
+            }
         }
 
         public void insert(POIBeizerPath path)
