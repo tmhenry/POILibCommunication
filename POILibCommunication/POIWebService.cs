@@ -20,7 +20,7 @@ namespace POILibCommunication
         private IPEndPoint localEP;
 
         private int servicePort = 81;
-        //public static String DNSServer = @"http://poiwebservice.elasticbeanstalk.com/dnsServer/interface.php";
+        //public static String DNSServer = @"http://pipeofinsight.elasticbeanstalk.com/dnsServer/interface.php";
         public static String DNSServer = @"http://128.174.240.185/dnsServer/interface.php";
 
         public Socket ServiceSocket

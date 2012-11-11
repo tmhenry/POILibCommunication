@@ -145,13 +145,15 @@ namespace POILibCommunication
     public enum PresCtrlType
     {
         Next = 0,
-        Prev
+        Prev,
+        Jump
     }
 
     public enum WBCtrlType
     {
         Show = 0,
-        Hide
+        Hide,
+        Clear
     }
 
     public struct PresentationControlPar
