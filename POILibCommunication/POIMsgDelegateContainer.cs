@@ -17,5 +17,6 @@ namespace POILibCommunication
         public POICommentCB CommentHandler { get; set; }
         public POISessionCtrlMsgCB SessionHandler { get; set; }
         public POIPointerCtrlMsgCB PointerHandler { get; set; }
+        public POIAudioContentMsgCB AudioContentHandler { get; set; }
     }
 }

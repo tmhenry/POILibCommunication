@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="POIArchive.cs" />
+    <Compile Include="POIAudioMsg.cs" />
     <Compile Include="POIBroadcast.cs" />
     <Compile Include="POICommentMsg.cs" />
     <Compile Include="POIComServer.cs" />

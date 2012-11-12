@@ -239,5 +239,9 @@ namespace POILibCommunication
         //Constants for laser pointer message
         public const int POI_POINTER_CONTROL                  = 110;
 
+        //Constants for audio packets
+        public const int POI_AUDIO_CONTENT                    = 120;
+        public const int POI_AUDIO_CONTROL                    = 121;
+
     }
 }

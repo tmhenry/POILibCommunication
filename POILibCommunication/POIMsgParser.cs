@@ -170,6 +170,8 @@ namespace POILibCommunication
                     parsePointerCtrlMsg(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_AUDIO_CONTENT:
+                    break;
             }
                               
         }
@@ -425,6 +427,22 @@ namespace POILibCommunication
             catch
             {
                 Console.WriteLine("No proper delegate for pointer control.");
+            }
+        }
+
+        private void parseAudioContentMsg(byte[] buffer, int offset)
+        {
+            POIAudioContentMsg msg = new POIAudioContentMsg();
+            msg.deserialize(buffer, ref offset);
+
+            try
+            {
+                //Pass the data to the pointer handler
+                Delegates.AudioContentHandler.audioContentMsgReceived(msg);
+            }
+            catch
+            {
+                Console.WriteLine("No proper delegate for audio content.");
             }
         }
 

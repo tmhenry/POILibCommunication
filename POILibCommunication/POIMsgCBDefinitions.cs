@@ -76,4 +76,9 @@ namespace POILibCommunication
     {
         void pointerCtrlMsgReceived(POIPointerMsg msg);
     }
+
+    public interface POIAudioContentMsgCB
+    {
+        void audioContentMsgReceived(POIAudioContentMsg msg);
+    }
 }
