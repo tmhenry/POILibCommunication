@@ -64,7 +64,7 @@ namespace POILibCommunication
             //A fake presentation info
             info[@"name"] = @"Pitch for Paul";
             info[@"presentor"] = @"POI";
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 28; i++)
             {
                 Console.WriteLine("Processing index: " + i);
                 POISlide slide = new POIStaticSlide(i, this);
