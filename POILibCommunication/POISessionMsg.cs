@@ -77,6 +77,12 @@ namespace POILibCommunication
             SessionId = sessionId;
         }
 
+        public void initSessionCreatedMsg(int sessionId)
+        {
+            CtrlType = (int)SessionCtrlType.Created;
+            SessionId = sessionId;
+        }
+
         private void initInfoDictionary()
         {
             info.Add(@"CtrlType", @"-1");

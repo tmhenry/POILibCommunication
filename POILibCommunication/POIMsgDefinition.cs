@@ -171,7 +171,8 @@ namespace POILibCommunication
         Start = 0,
         End,
         Join,
-        Leave
+        Leave,
+        Created
     }
 
     #endregion

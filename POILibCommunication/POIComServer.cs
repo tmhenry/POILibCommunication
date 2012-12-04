@@ -35,6 +35,8 @@ namespace POILibCommunication
             {
                 if (connection.Type == POIMsgParser.ParserType.Control)
                 {
+                    Console.WriteLine("Connection ended by user!");
+
                     //Reset the user status
                     user.Status = POIUser.ConnectionStatus.Disconnected;
 

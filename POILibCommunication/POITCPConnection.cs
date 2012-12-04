@@ -57,11 +57,9 @@ namespace POILibCommunication
         private void Receive_Completed(object sender, SocketAsyncEventArgs args)
         {
             //Get the token as a user object
-            
-
             if (args.SocketError == SocketError.Success && args.BytesTransferred > 0)
             {
-
+                
                 int remainingBytes = args.BytesTransferred;
                 int remainingHeaderBytes;
                 int remainingPayloadBytes;
@@ -149,10 +147,12 @@ namespace POILibCommunication
                         }
                     }
                 }
+                
 
                 //Start another round of async read
                 try
                 {
+                    //Console.WriteLine("Waiting for reading!");
                     mySocket.ReceiveAsync(args);
                 }
                 catch(Exception e)
@@ -164,7 +164,7 @@ namespace POILibCommunication
             }
             else
             {
-                Console.WriteLine(args.SocketError);
+                Console.WriteLine(args.SocketError + " Bytes received: " + args.BytesTransferred);
                 mySocket.Close();
 
                 connectionCBDelegate.ConnectionEnded(this);
