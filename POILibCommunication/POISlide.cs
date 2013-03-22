@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.IO;
+using System.Drawing;
 
 using POILibCommunication;
 
@@ -120,13 +121,29 @@ namespace POILibCommunication
 
             try
             {
-                byte[] data = File.ReadAllBytes(Source.LocalPath);
+
+                FileStream fs = new FileStream(Source.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                byte[] data = new byte[fs.Length];
+                fs.Read(data, 0, (int)fs.Length);
                 int dataSize = data.Length;
 
                 serializeInt32(buffer, ref offset, dataSize);
                 Array.Copy(data, 0, buffer, offset, dataSize);
-                offset += dataSize;
 
+
+                offset += dataSize;
+                fs.Close();
+                //FileStream fs = new FileStream(Source.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                //Image image = Image.FromStream(fs);
+                //MemoryStream ms = new MemoryStream();
+                //image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                //byte[] data = ms
+
+                //int dataSize = data.Length;
+                //serializeInt32(buffer, ref offset, dataSize);
+                //Array.Copy(data, 0, buffer, offset, dataSize);
+                //offset += dataSize;
+                //ms.Close();
             }
             catch (Exception e)
             {
@@ -182,9 +199,20 @@ namespace POILibCommunication
             //Get the data size
             try
             {
-                FileStream myStream = new FileStream(Source.LocalPath, FileMode.Create);
+                FileStream myStream = new FileStream(Source.LocalPath, FileMode.Create, System.IO.FileAccess.Write);
                 myStream.Write(buffer, offset, dataSize);
                 myStream.Close();
+
+                //byte[] byteArrayIn = new byte[dataSize];
+
+
+                //MemoryStream ms = new MemoryStream(buffer, offset, dataSize);
+
+                //Image returnImage = Image.FromStream(ms);
+
+                //returnImage.Save(Source.LocalPath);
+               // ms.Close();
+                
             }
             catch (Exception e)
             {

@@ -23,6 +23,7 @@ namespace POILibCommunication
         
         //Properties
         public int Count { get { return slideList.Count; } }
+        public int PresID { get { return presId;} }
         public Int64 Size
         {
             get 
@@ -53,6 +54,12 @@ namespace POILibCommunication
             sizeChanged = false;
         }
 
+        public POIPresentation(int presIDFromUploader, string name, string presentor)
+        {
+            this.presId = presIDFromUploader;
+            info[@"name"] = name;
+            info[@"presentor"] = presentor;
+        }
         public POIPresentation()
         {
             sizeChanged = true;
