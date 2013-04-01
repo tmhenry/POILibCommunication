@@ -13,7 +13,6 @@ namespace POILibCommunication
     public class POIPresentation: POIMessage
     {
         Dictionary<int, POISlide> slideList = new Dictionary<int, POISlide>();
-        Dictionary<int, POISlide> animationSlideList = new Dictionary<int,POISlide>();
         Dictionary<string, string> info = new Dictionary<string, string>();
         int presId = 3;
         Int64 size;
@@ -48,11 +47,6 @@ namespace POILibCommunication
             size += infoBytes.Length;
 
             foreach (POISlide slide in slideList.Values)
-            {
-                size += slide.Size;
-            }
-
-            foreach (POISlide slide in animationSlideList.Values)
             {
                 size += slide.Size;
             }
@@ -139,11 +133,6 @@ namespace POILibCommunication
             slideList[slide.Index] = slide;
             sizeChanged = true;
         }
-        public void InsertAnimationSlide(POISlide slide)
-        {
-            animationSlideList[slide.Index] = slide;
-            sizeChanged = true;
-        }
 
         public override void serialize(byte[] buffer, ref int offset)
         {
@@ -163,12 +152,6 @@ namespace POILibCommunication
             serializeInt32(buffer, ref offset, slideList.Count);
 
             foreach (POISlide slide in slideList.Values)
-            {
-                slide.serialize(buffer, ref offset);
-            }
-
-            serializeInt32(buffer, ref offset, animationSlideList.Count);
-            foreach (POISlide slide in animationSlideList.Values)
             {
                 slide.serialize(buffer, ref offset);
             }
@@ -201,15 +184,6 @@ namespace POILibCommunication
                 POISlide slide = new POISlide(this);
                 slide.deserialize(buffer, ref offset);
 
-                Insert(slide);
-                size += slide.Size;
-            }
-
-            deserializeInt32(buffer, ref offset, ref numSlides);
-            for(int i=0;i<numSlides;i++)
-            {
-                POISlide slide = new POISlide(this);
-                slide.deserialize(buffer,ref offset);
                 Insert(slide);
                 size += slide.Size;
             }

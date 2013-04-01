@@ -44,11 +44,16 @@ namespace POILibCommunication
             get { return size; }
         }
 
+        public SlideType Type
+        {
+            get { return type; }
+        }
+
         public Uri Source
         {
             get 
             {
-                String uri = POIArchive.ArchiveHome + parentPresentation.BasePath + @"/" + index;
+                String uri = Path.Combine(POIArchive.ArchiveHome, parentPresentation.BasePath, index.ToString());
                 
                 switch (format)
                 {
