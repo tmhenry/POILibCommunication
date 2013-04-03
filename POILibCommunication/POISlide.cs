@@ -77,6 +77,15 @@ namespace POILibCommunication
             }
         }
 
+        protected String SourceWithoutFormat
+        {
+            get
+            {
+                return Path.Combine(POIArchive.ArchiveHome, parentPresentation.BasePath, index.ToString());
+            }
+        }
+
+
         public int Index
         {
             get { return index; }
@@ -138,6 +147,8 @@ namespace POILibCommunication
 
                 offset += dataSize;
                 fs.Close();
+
+                
                 //FileStream fs = new FileStream(Source.LocalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 //Image image = Image.FromStream(fs);
                 //MemoryStream ms = new MemoryStream();
@@ -245,6 +256,8 @@ namespace POILibCommunication
             FileInfo info = new FileInfo(Source.LocalPath);
             size += info.Length;
         }
+
+        
     }
 
     public class POIAnimationSlide: POISlide
@@ -261,6 +274,68 @@ namespace POILibCommunication
 
             FileInfo info = new FileInfo(Source.LocalPath);
             size += info.Length;
+        }
+
+        public override void serialize(byte[] buffer, ref int offset)
+        {
+            //First serialize with the POISlide class
+            base.serialize(buffer, ref offset);
+
+            //Serialize the cover page format
+            String cvPicPath = SourceWithoutFormat + ".PNG";
+            serializeInt32(buffer, ref offset, (int)SlideContentFormat.PNG);
+
+            //Serialize the cover page content
+            try
+            {
+                FileStream fs = new FileStream(cvPicPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                byte[] data = new byte[fs.Length];
+                fs.Read(data, 0, (int)fs.Length);
+                int dataSize = data.Length;
+
+                serializeInt32(buffer, ref offset, dataSize);
+                Array.Copy(data, 0, buffer, offset, dataSize);
+
+
+                offset += dataSize;
+                fs.Close();
+            }
+            catch (IOException e)
+            {
+
+            }
+            
+        }
+
+        public override void deserialize(byte[] buffer, ref int offset)
+        {
+            base.deserialize(buffer, ref offset);
+
+            //Deserialize the format 
+            int slideContentFormat = 0;
+            deserializeInt32(buffer, ref offset, ref slideContentFormat);
+            size += sizeof(int);
+
+            //Deserialize and save the slides into hard-disk
+            int dataSize = 0;
+            deserializeInt32(buffer, ref offset, ref dataSize);
+            size += sizeof(int) + dataSize;
+
+            String cvPicPath = SourceWithoutFormat + ".PNG";
+
+            try
+            {
+                FileStream myStream = new FileStream(cvPicPath, FileMode.Create, System.IO.FileAccess.Write);
+                myStream.Write(buffer, offset, dataSize);
+                myStream.Close();
+            }
+            catch (IOException e)
+            {
+
+            }
+
+            offset += dataSize;
+
         }
     }
 }
