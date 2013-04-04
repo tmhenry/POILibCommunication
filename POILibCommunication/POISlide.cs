@@ -34,7 +34,7 @@ namespace POILibCommunication
 
         protected Int64 size;
         protected const int fieldSizeStatic = 4 * sizeof(int);
-        protected const int fieldSizeAnimation = 5 * sizeof(int);
+        protected const int fieldSizeAnimation = 7 * sizeof(int);
 
         protected POIPresentation parentPresentation;
 
@@ -242,6 +242,8 @@ namespace POILibCommunication
 
     public class POIStaticSlide: POISlide
     {
+        public POIStaticSlide(POIPresentation parent):base(parent) { }
+
         public POIStaticSlide(int myIndex, POIPresentation parent)
             :base(parent)
         {
@@ -262,6 +264,8 @@ namespace POILibCommunication
 
     public class POIAnimationSlide: POISlide
     {
+        public POIAnimationSlide(POIPresentation parent):base(parent) { }
+
         public POIAnimationSlide(List<int> myDurationList, int myIndex, POIPresentation parent)
             :base(parent)
         {
@@ -273,6 +277,9 @@ namespace POILibCommunication
             size = fieldSizeAnimation + durationList.Count * sizeof(int);
 
             FileInfo info = new FileInfo(Source.LocalPath);
+            size += info.Length;
+
+            info = new FileInfo(SourceWithoutFormat + ".PNG");
             size += info.Length;
         }
 
@@ -302,7 +309,7 @@ namespace POILibCommunication
             }
             catch (IOException e)
             {
-
+                Console.WriteLine(e);
             }
             
         }
@@ -328,13 +335,15 @@ namespace POILibCommunication
                 FileStream myStream = new FileStream(cvPicPath, FileMode.Create, System.IO.FileAccess.Write);
                 myStream.Write(buffer, offset, dataSize);
                 myStream.Close();
+
+                offset += dataSize;
             }
             catch (IOException e)
             {
-
+                Console.WriteLine(e);
             }
 
-            offset += dataSize;
+            
 
         }
     }

@@ -48,6 +48,7 @@ namespace POILibCommunication
 
             foreach (POISlide slide in slideList.Values)
             {
+                size += sizeof(int);
                 size += slide.Size;
             }
 
@@ -153,8 +154,12 @@ namespace POILibCommunication
 
             foreach (POISlide slide in slideList.Values)
             {
+                serializeInt32(buffer, ref offset, (int)slide.Type);
                 slide.serialize(buffer, ref offset);
+                Console.WriteLine(offset);
             }
+
+            Console.WriteLine("Hey Hey");
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
@@ -181,11 +186,24 @@ namespace POILibCommunication
 
             for (int i = 0; i < numSlides; i++)
             {
-                POISlide slide = new POISlide(this);
-                slide.deserialize(buffer, ref offset);
+                int curType = 0;
+                deserializeInt32(buffer, ref offset, ref curType);
+                size += sizeof(int);
 
-                Insert(slide);
-                size += slide.Size;
+                POISlide curSlide = null;
+                if (curType == (int)SlideType.Static)
+                {
+                    curSlide = new POIStaticSlide(this);
+                }
+                else
+                {
+                    curSlide = new POIAnimationSlide(this);
+                }
+
+                curSlide.deserialize(buffer, ref offset);
+
+                Insert(curSlide);
+                size += curSlide.Size;
             }
 
             sizeChanged = false;
