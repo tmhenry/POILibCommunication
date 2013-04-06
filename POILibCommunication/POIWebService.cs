@@ -22,6 +22,7 @@ namespace POILibCommunication
         private int servicePort = 81;
         //public static String DNSServer = @"http://pipeofinsight.elasticbeanstalk.com/dnsServer/interface.php";
         public static String DNSServer = @"http://192.168.0.143/dnsServer/interface.php";
+        
 
         public Socket ServiceSocket
         {

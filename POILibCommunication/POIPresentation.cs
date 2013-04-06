@@ -12,8 +12,8 @@ namespace POILibCommunication
 {
     public class POIPresentation: POIMessage
     {
-        Dictionary<int, POISlide> slideList = new Dictionary<int, POISlide>();
-        Dictionary<string, string> info = new Dictionary<string, string>();
+        public Dictionary<int, POISlide> slideList = new Dictionary<int, POISlide>();
+        public Dictionary<string, string> info = new Dictionary<string, string>();
         int presId = 3;
         Int64 size;
         const int fieldSize = 3 * sizeof(int);
@@ -87,6 +87,17 @@ namespace POILibCommunication
             //POISlide slide2 = new POIAnimationSlide(duration, 12, this);
 
             //Insert(slide2);
+        }
+
+        public static POIPresentation LoadPresentationFromArchive(int myId)
+        {
+            POIPresentation pres = new POIPresentation();
+
+            //Get the .poi file from the content server
+            int offset = 0;
+            pres.deserialize(POIContentServerHelper.getPresInfo(myId), ref offset);
+
+            return pres;
         }
 
         public void ParseIntoSlides(String slidesInfoJson)
