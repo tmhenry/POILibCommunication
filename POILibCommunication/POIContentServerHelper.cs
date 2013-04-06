@@ -21,7 +21,7 @@ namespace POILibCommunication
 
         static public String ContentServerHome
         {
-            get { return "http://192.168.1.137/content.php"; }
+            get { return POIGlobalVar.ContentServerHome; }
         }
 
         static public byte[] getPresInfo(int presId)

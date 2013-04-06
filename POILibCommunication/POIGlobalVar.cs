@@ -13,9 +13,9 @@ namespace POILibCommunication
         public static POIKernel SystemKernel { get; set; }
         public static POIComServer SystemDataHandler { get; set; }
         public static Dictionary<string, POIUser> UserProfiles { get; set; }
-        //public static POIUIScheduler Scheduler { get; set; }
 
-        //public static String DNSServer = @"http://poiwebservice.elasticbeanstalk.com/dnsServer/interface.php";
-        //public static Window CurWindow = Application.Current.MainWindow;
+        public static String ContentServerHome { get { return "http://localhost/content.php"; } }
+        public static String DNSServerHome { get { return "http://localhost/dnsServer/interface.php"; } }
+        //public static POIUIScheduler Scheduler { get; set; }
     }
 }

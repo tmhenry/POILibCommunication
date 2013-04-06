@@ -8,3 +8,8 @@ C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debu
 C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
 C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
 C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
+C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
+C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
+C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
+C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
