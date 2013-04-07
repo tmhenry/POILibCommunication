@@ -89,17 +89,6 @@ namespace POILibCommunication
             //Insert(slide2);
         }
 
-        public static POIPresentation LoadPresentationFromArchive(int myId)
-        {
-            POIPresentation pres = new POIPresentation();
-
-            //Get the .poi file from the content server
-            int offset = 0;
-            pres.deserialize(POIContentServerHelper.getPresInfo(myId), ref offset);
-
-            return pres;
-        }
-
         public void ParseIntoSlides(String slidesInfoJson)
         {
             
