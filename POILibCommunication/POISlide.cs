@@ -49,6 +49,16 @@ namespace POILibCommunication
             get { return type; }
         }
 
+        public int Index
+        {
+            get { return index; }
+        }
+
+        public List<int> DurationList
+        {
+            get { return durationList; }
+        }
+
         public Uri Source
         {
             get 
@@ -85,11 +95,6 @@ namespace POILibCommunication
             }
         }
 
-
-        public int Index
-        {
-            get { return index; }
-        }
 
         //Functions
         public POISlide(POIPresentation parent)
@@ -173,6 +178,7 @@ namespace POILibCommunication
 
             //Deserialize the index
             deserializeInt32(buffer, ref offset, ref index);
+            size += sizeof(int);
 
             int slideType = 0;
             deserializeInt32(buffer, ref offset, ref slideType);

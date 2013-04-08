@@ -158,8 +158,6 @@ namespace POILibCommunication
                 slide.serialize(buffer, ref offset);
                 Console.WriteLine(offset);
             }
-
-            Console.WriteLine("Hey Hey");
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
@@ -167,7 +165,15 @@ namespace POILibCommunication
             size = fieldSize;
             slideList = new Dictionary<int, POISlide>();
 
+            //Deserialize the presenation ID
             deserializeInt32(buffer, ref offset, ref presId);
+
+            //Create the folder if the directory does not exist
+            String folderPath = Path.Combine(POIArchive.ArchiveHome, BasePath);
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
 
             //Deserialize the info length
             int infoLength = 0;
