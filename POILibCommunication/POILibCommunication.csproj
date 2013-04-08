@@ -53,6 +53,7 @@
     <Compile Include="POIBroadcast.cs" />
     <Compile Include="POICommentMsg.cs" />
     <Compile Include="POIComServer.cs" />
+    <Compile Include="POIContentServerHelper.cs" />
     <Compile Include="POIEventArgs.cs" />
     <Compile Include="POIGlobalVar.cs" />
     <Compile Include="POIInitializationMsg.cs" />
