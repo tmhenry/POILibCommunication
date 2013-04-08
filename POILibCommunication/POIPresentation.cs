@@ -12,7 +12,7 @@ namespace POILibCommunication
 {
     public class POIPresentation: POIMessage
     {
-        public Dictionary<int, POISlide> slideList = new Dictionary<int, POISlide>();
+        public Dictionary<string, POISlide> slideList = new Dictionary<string, POISlide>();
         public Dictionary<string, string> info = new Dictionary<string, string>();
         int presId = 3;
         Int64 size;
@@ -96,9 +96,9 @@ namespace POILibCommunication
 
         public POISlide SlideAtIndex(int index)
         {
-            if (slideList.ContainsKey(index))
+            if (slideList.ContainsKey(index.ToString()))
             {
-                return slideList[index];
+                return slideList[index.ToString()];
             }
             else
             {
@@ -131,7 +131,7 @@ namespace POILibCommunication
 
         public void Insert(POISlide slide)
         {
-            slideList[slide.Index] = slide;
+            slideList[slide.Index.ToString()] = slide;
             sizeChanged = true;
         }
 
@@ -163,7 +163,7 @@ namespace POILibCommunication
         public override void deserialize(byte[] buffer, ref int offset)
         {
             size = fieldSize;
-            slideList = new Dictionary<int, POISlide>();
+            slideList = new Dictionary<string, POISlide>();
 
             //Deserialize the presenation ID
             deserializeInt32(buffer, ref offset, ref presId);
