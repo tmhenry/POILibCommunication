@@ -100,6 +100,8 @@ namespace POILibCommunication
         public POISlide(POIPresentation parent)
         {
             size = 0;
+            durationList = new List<int>();
+
             parentPresentation = parent;
         }
 
