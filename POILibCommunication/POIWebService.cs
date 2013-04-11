@@ -20,13 +20,13 @@ namespace POILibCommunication
         private IPEndPoint localEP;
 
         private int servicePort = 81;
-        public static String DNSServer = POIGlobalVar.DNSServerHome;
-        
 
-        public Socket ServiceSocket
+        public static Socket ServiceSocket
         {
-            get { return mySocket; }
-            set { mySocket = value; }
+            get
+            {
+                return Instance.mySocket;
+            }
         }
 
         private enum RequestType
@@ -36,94 +36,60 @@ namespace POILibCommunication
             ResolveByServerName,
             ResolveByUserRight,
             RequestRight,
+            Image,
+            ResolveServerAddr,
+            UploadPresentation,
             Unknown
         }
 
-        public POIWebService(string name, string desc, string img)
+        
+        //Shared instance for singleton implementation
+        private static POIWebService sharedInstance;
+
+        private static POIWebService Instance
         {
-            _name = name;
-            _description = desc;
+            get
+            {
+                if (sharedInstance == null)
+                {
+                    sharedInstance = new POIWebService();
+                }
 
-            localEP = new IPEndPoint(IPAddress.Any, servicePort);
-
-            mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            mySocket.Bind(localEP);
-            localEP = (IPEndPoint)mySocket.LocalEndPoint;
-
-            dnsServerHost = DNSServer;
+                return sharedInstance;
+            }
         }
 
-        public void sendRequest(string msg)
+        //Private constructor for web service
+        private POIWebService()
         {
-            HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(dnsServerHost);
-            myRequest.Method = "POST";
-            myRequest.Proxy = null;
-
-            
-            //Prepare the post data
-            byte[] postBytes = Encoding.UTF8.GetBytes(msg);
-            myRequest.ContentType = "application/x-www-form-urlencoded";
-            myRequest.ContentLength = postBytes.Length;
-            Stream dataStream = myRequest.GetRequestStream();
-            dataStream.Write(postBytes, 0, postBytes.Length);
-            dataStream.Close();
-            
-            WebResponse myResponse = myRequest.GetResponse();
-            StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
-            string responseString = sr.ReadToEnd();
-            sr.Close();
-            myResponse.Close();
-            
-            Console.WriteLine(responseString);
-
-            //return responseString;
-
-            /*
-            myRequest.BeginGetResponse
-            (
-                new AsyncCallback(ResponseCB),
-                myRequest
-            );*/
+            dnsServerHost = POIGlobalVar.DNSServerHome;
         }
 
-        private void ResponseCB(IAsyncResult ar)
+        //Start the TCP handling service
+        private static void StartTCPService()
         {
-            WebRequest req = ar.AsyncState as WebRequest;
-            WebResponse myResponse = req.EndGetResponse(ar);
+            //Bind the port and start the TCP handling
+            Instance.localEP = new IPEndPoint(IPAddress.Any, Instance.servicePort);
 
-            StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.UTF8);
-            string responseString = sr.ReadToEnd();
-
-            sr.Close();
-            myResponse.Close();
-
-            Console.WriteLine(responseString);
+            Instance.mySocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Instance.mySocket.Bind(Instance.localEP);
+            Instance.localEP = (IPEndPoint)Instance.mySocket.LocalEndPoint;
         }
 
-        public Dictionary<string, string> parseResponseSingle(string response)
+        //Public functions for services
+        public static void StartService(string name, string desc, string img)
         {
-            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
-            Dictionary<string, string> myDic = jsonParser.Deserialize<Dictionary<string, string>>(response);
+            Instance._name = name;
+            Instance._description = desc;
 
-            return myDic;
-        }
+            StartTCPService();
 
-        public List<Dictionary<string, string>> parseResponseArray(string response)
-        {
-            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
-            List<Dictionary<string, string>> myDicList = jsonParser.Deserialize<List<Dictionary<string, string>>>(response);
-
-            return myDicList;
-        }
-
-        public void StartService()
-        {
-            //Prepare the POST data
+            //Register the server to the POI DNS server
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
 
             Dictionary<string, string> serviceEntry = new Dictionary<string, string>();
-            serviceEntry.Add(@"name", _name);
-            serviceEntry.Add(@"description",_description);
+            serviceEntry.Add(@"name", name);
+            serviceEntry.Add(@"description", desc);
 
             IPAddress[] localAddrs = Dns.GetHostAddresses(Dns.GetHostName());
             IPAddress ip4Addr = localAddrs[0];
@@ -137,37 +103,37 @@ namespace POILibCommunication
             }
 
             serviceEntry.Add(@"ip", ip4Addr.ToString());
-            serviceEntry.Add(@"port", localEP.Port.ToString());
+            serviceEntry.Add(@"port", Instance.servicePort.ToString());
 
             string serviceEntryStr = jsonParser.Serialize(serviceEntry);
             Console.WriteLine(serviceEntryStr);
 
-            string postDataStr = @"type="+ (int) RequestType.Publish + "&data=" + serviceEntryStr;
+            string postDataStr = @"type=" + (int)RequestType.Publish + "&data=" + serviceEntryStr;
 
             try
             {
                 sendRequest(postDataStr);
             }
-            catch(WebException e)
+            catch (WebException e)
             {
                 Console.WriteLine(e.Message);
-            }
-            
+            }            
         }
 
-        public void StopService()
+        
+        public static void StopService()
         {
-            //Prepare the POST data
+            //Unregister the server to the DNS server
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
 
             Dictionary<string, string> postData = new Dictionary<string, string>();
 
             Dictionary<string, string> serviceEntry = new Dictionary<string, string>();
-            serviceEntry.Add(@"name", _name);
+            serviceEntry.Add(@"name", Instance._name);
             string serviceEntryStr = jsonParser.Serialize(serviceEntry);
 
 
-            string postDataStr = @"type="+ (int)RequestType.Remove + "&data=" + serviceEntryStr;
+            string postDataStr = @"type=" + (int)RequestType.Remove + "&data=" + serviceEntryStr;
 
             try
             {
@@ -178,5 +144,80 @@ namespace POILibCommunication
                 Console.WriteLine(e.Message);
             }
         }
+
+        //Register the current presentation and retrieve an presentation ID
+        public static int UploadPresentation(String name, String description)
+        {
+
+            //Prepare the POST data
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
+
+            Dictionary<string, string> presEntry = new Dictionary<string, string>();
+            presEntry.Add(@"name", name);
+            presEntry.Add(@"description", description);
+
+            string presEntryStr = jsonParser.Serialize(presEntry);
+            string postDataStr = @"type=" + (int)RequestType.UploadPresentation + "&data=" + presEntryStr;
+
+            //Set the default presId when presentation is not inserted
+            int presId = -1;
+
+            try
+            {
+                string response = sendRequest(postDataStr);
+                if (response != null)
+                {
+                    Dictionary<string, string> dict = parseResponseSingle(response);
+                    presId = Int32.Parse(dict["PresId"]);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return presId;
+        }
+
+
+        //Utility functions for web service, return null response if error occurs
+        public static string sendRequest(string msg)
+        {
+
+            //Use the webclient to make post request to the DNS server
+            using (WebClient wc = new WebClient())
+            {
+                wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+
+                try
+                {
+                    string HtmlResult = wc.UploadString(Instance.dnsServerHost, msg);
+                    return HtmlResult;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return null;
+                }
+            }
+        }
+
+
+        private static Dictionary<string, string> parseResponseSingle(string response)
+        {
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
+            Dictionary<string, string> myDic = jsonParser.Deserialize<Dictionary<string, string>>(response);
+
+            return myDic;
+        }
+
+        private static List<Dictionary<string, string>> parseResponseArray(string response)
+        {
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
+            List<Dictionary<string, string>> myDicList = jsonParser.Deserialize<List<Dictionary<string, string>>>(response);
+
+            return myDicList;
+        }
+        
     }
 }
