@@ -33,8 +33,8 @@ namespace POILibCommunication
         protected SlideType type;
 
         protected Int64 size;
-        protected const int fieldSizeStatic = 4 * sizeof(int);
-        protected const int fieldSizeAnimation = 7 * sizeof(int);
+        protected const int fieldSizeStatic = 2 * sizeof(int);
+        protected const int fieldSizeAnimation = 2 * sizeof(int);
 
         protected POIPresentation parentPresentation;
 
@@ -58,6 +58,8 @@ namespace POILibCommunication
         {
             get { return durationList; }
         }
+
+        
 
         public Uri Source
         {
@@ -137,6 +139,7 @@ namespace POILibCommunication
                 }
             }
 
+            /*
             //Serialize the content
             serializeInt32(buffer, ref offset, (int)format);
 
@@ -171,7 +174,7 @@ namespace POILibCommunication
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-            }
+            }*/
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
@@ -206,6 +209,7 @@ namespace POILibCommunication
                 }
             }
 
+            /*
             //Deserialize the format 
             int slideContentFormat = 0;
             deserializeInt32(buffer, ref offset, ref slideContentFormat);
@@ -244,7 +248,7 @@ namespace POILibCommunication
             }
 
             //Increase the handled offset
-            offset += dataSize;
+            offset += dataSize;*/
         }
     }
 
@@ -263,8 +267,9 @@ namespace POILibCommunication
 
             size = fieldSizeStatic;
 
+            /*
             FileInfo info = new FileInfo(Source.LocalPath);
-            size += info.Length;
+            size += info.Length;*/
         }
 
         
@@ -284,11 +289,12 @@ namespace POILibCommunication
             format = SlideContentFormat.WMV;
             size = fieldSizeAnimation + durationList.Count * sizeof(int);
 
+            /*
             FileInfo info = new FileInfo(Source.LocalPath);
             size += info.Length;
 
             info = new FileInfo(SourceWithoutFormat + ".PNG");
-            size += info.Length;
+            size += info.Length;*/
         }
 
         public override void serialize(byte[] buffer, ref int offset)
@@ -296,6 +302,7 @@ namespace POILibCommunication
             //First serialize with the POISlide class
             base.serialize(buffer, ref offset);
 
+            /*
             //Serialize the cover page format
             String cvPicPath = SourceWithoutFormat + ".PNG";
             serializeInt32(buffer, ref offset, (int)SlideContentFormat.PNG);
@@ -318,14 +325,15 @@ namespace POILibCommunication
             catch (IOException e)
             {
                 Console.WriteLine(e);
-            }
+            }*/
             
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
             base.deserialize(buffer, ref offset);
-
+            
+            /*
             //Deserialize the format 
             int slideContentFormat = 0;
             deserializeInt32(buffer, ref offset, ref slideContentFormat);
@@ -349,7 +357,7 @@ namespace POILibCommunication
             catch (IOException e)
             {
                 Console.WriteLine(e);
-            }
+            }*/
 
             
 
