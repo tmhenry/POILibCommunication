@@ -34,7 +34,7 @@ namespace POILibCommunication
 
         protected Int64 size;
         protected const int fieldSizeStatic = 2 * sizeof(int);
-        protected const int fieldSizeAnimation = 2 * sizeof(int);
+        protected const int fieldSizeAnimation = 3 * sizeof(int);
 
         protected POIPresentation parentPresentation;
 
@@ -287,6 +287,8 @@ namespace POILibCommunication
             type = SlideType.Animation;
             durationList = myDurationList;
             format = SlideContentFormat.WMV;
+
+            //Three fields
             size = fieldSizeAnimation + durationList.Count * sizeof(int);
 
             /*
