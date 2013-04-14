@@ -146,15 +146,11 @@ namespace POILibCommunication
         }
 
         //Register the current presentation and retrieve an presentation ID
-        public static int UploadPresentation(String name, String description)
+        public static int UploadPresentation(Dictionary<string,string> presEntry)
         {
 
             //Prepare the POST data
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
-
-            Dictionary<string, string> presEntry = new Dictionary<string, string>();
-            presEntry.Add(@"name", name);
-            presEntry.Add(@"description", description);
 
             string presEntryStr = jsonParser.Serialize(presEntry);
             string postDataStr = @"type=" + (int)RequestType.UploadPresentation + "&data=" + presEntryStr;
