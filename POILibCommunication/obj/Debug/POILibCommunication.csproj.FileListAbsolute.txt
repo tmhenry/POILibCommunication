@@ -17,3 +17,5 @@ C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.
 C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
