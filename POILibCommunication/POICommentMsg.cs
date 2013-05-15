@@ -375,6 +375,7 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
+            //base.serialize(buffer, ref offset);
             serializeInt32(buffer, ref offset, frameNum);
             serializeInt32(buffer, ref offset, numBeizerPath);
             serializeInt32(buffer, ref offset, numText);
@@ -394,6 +395,7 @@ namespace POILibCommunication
         {
             size = fieldSize;
 
+            //base.deserialize(buffer, ref offset);
             deserializeInt32(buffer, ref offset, ref frameNum);
             deserializeInt32(buffer, ref offset, ref numBeizerPath);
             deserializeInt32(buffer, ref offset, ref numText);

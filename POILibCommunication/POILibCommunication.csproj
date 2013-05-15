@@ -72,6 +72,7 @@
     <Compile Include="POISessionMsg.cs" />
     <Compile Include="POISlide.cs" />
     <Compile Include="POITCPConnection.cs" />
+    <Compile Include="POITimestamp.cs" />
     <Compile Include="POIUDPReceiver.cs" />
     <Compile Include="POIUser.cs" />
     <Compile Include="POIWebService.cs" />

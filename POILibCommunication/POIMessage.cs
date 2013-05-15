@@ -113,14 +113,47 @@ namespace POILibCommunication
     {
         public abstract byte[] getPacket();
 
+        public double timestamp;
+
+        public override void serialize(byte[] buffer, ref int offset)
+        {
+            serializeDouble(buffer, ref offset, timestamp);
+        }
+
+        public override void deserialize(byte[] buffer, ref int offset)
+        {
+            deserializeDouble(buffer, ref offset, ref timestamp);
+        }
+
+        public void setTimestampToNow()
+        {
+            timestamp = POITimestamp.ConvertToUnixTimestamp(DateTime.Now);
+        }
+
+        public void setTimestampToDate(DateTime time)
+        {
+            timestamp = POITimestamp.ConvertToUnixTimestamp(time);
+        }
+
+        public void setTimestampToDouble(double time)
+        {
+            timestamp = time;
+        }
+
+        public Double Timestamp { get { return timestamp; } }
+
+        protected static int MetadataSize { get { return sizeof(double); } }
+
         protected byte[] composePacket(int type, byte[] data)
         {
 
+            //The packet length contains the type and the timestamp
             int packetLength = 1 + data.Length;
             byte[] myBytes = new byte[packetLength];
 
             int offset = 0;
             serializeByte(myBytes, ref offset, (byte)type);
+
             Array.Copy(data, 0, myBytes, offset, data.Length);
 
             return myBytes;

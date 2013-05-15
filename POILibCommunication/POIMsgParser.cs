@@ -104,6 +104,9 @@ namespace POILibCommunication
 
             Console.WriteLine("Current type is: " + cmdType);
 
+            //Get the timestamp of the packet
+
+
             switch(cmdType)
             {
                 //Initialization:

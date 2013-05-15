@@ -92,7 +92,7 @@ namespace POILibCommunication
         public int CtrlType { get { return ctrlType; } }
         
         
-        int size = fieldSize;
+        int size = fieldSize + MetadataSize;
         const int fieldSize = 2 * sizeof(int);
         public int Size { get { return size; } }
 
@@ -114,12 +114,14 @@ namespace POILibCommunication
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
+            base.deserialize(buffer, ref offset);
             deserializeInt32(buffer, ref offset, ref ctrlType);
             deserializeInt32(buffer, ref offset, ref slide);
         }
 
         public override void serialize(byte[] buffer, ref int offset)
         {
+            base.serialize(buffer, ref offset);
             serializeInt32(buffer, ref offset, ctrlType);
             serializeInt32(buffer, ref offset, slide);
         }

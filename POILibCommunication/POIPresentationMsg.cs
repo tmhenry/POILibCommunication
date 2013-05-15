@@ -14,7 +14,7 @@ namespace POILibCommunication
         public int SlideIndex { get { return slideIndex; } }
 
         const int fieldSize = 2 * sizeof(int);
-        static int size = fieldSize;
+        static int size = fieldSize + MetadataSize;
         static public int Size { get { return size; } }
 
         public POIPresCtrlMsg() { }
@@ -26,13 +26,14 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
+            base.serialize(buffer, ref offset);
             serializeInt32(buffer, ref offset, ctrlType);
             serializeInt32(buffer, ref offset, slideIndex);
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
-            Console.WriteLine("I'm here!");
+            base.deserialize(buffer, ref offset);
             deserializeInt32(buffer, ref offset, ref ctrlType);
             deserializeInt32(buffer, ref offset, ref slideIndex);
 
