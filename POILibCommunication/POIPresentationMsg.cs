@@ -17,9 +17,14 @@ namespace POILibCommunication
         static int size = fieldSize + MetadataSize;
         static public int Size { get { return size; } }
 
-        public POIPresCtrlMsg() { }
+        public POIPresCtrlMsg() 
+        {
+            messageType = POIMsgDefinition.POI_PRESENTATION_CONTROL;
+        }
+
         public POIPresCtrlMsg(int myCtrlType, int mySlideIndex)
         {
+            messageType = POIMsgDefinition.POI_PRESENTATION_CONTROL;
             ctrlType = myCtrlType;
             slideIndex = mySlideIndex;
         }
@@ -47,6 +52,7 @@ namespace POILibCommunication
 
             serialize(packet, ref offset);
 
+            //return packet;
             return composePacket(POIMsgDefinition.POI_PRESENTATION_CONTROL, packet);
         }
     }

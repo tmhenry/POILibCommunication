@@ -43,6 +43,7 @@ namespace POILibCommunication
         public void LogEvent(POIMessage message)
         {
             DataDict.Add(message.Timestamp, message);
+            Console.WriteLine("Haha");
         }
 
         public void WriteArchive()
@@ -52,10 +53,16 @@ namespace POILibCommunication
 
             foreach (POIMessage message in DataDict.Values)
             {
-                bw.Write(message.getPacket());
+                byte[] data = message.getPacket();
+                Console.WriteLine(data.Length);
+                if(message.GetType() == typeof(POIComment))
+                bw.Write(data);
             }
 
             bw.Close();
+
+            //Upload the archive to the content server
+            POIContentServerHelper.uploadContent(presId, archiveFn);
         }
 
         public void ReadArchive()
@@ -77,11 +84,23 @@ namespace POILibCommunication
 
             while (offset < ms.Length)
             {
-                msgTypeByte = buffer[offset];
-                offset++;
+                
 
-                curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
-                curMsg.deserialize(buffer, ref offset);
+                try
+                {
+                    msgTypeByte = buffer[offset];
+                    offset++;
+
+                    curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
+
+                    curMsg.deserialize(buffer, ref offset);
+                    Console.WriteLine(offset);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("WTF");
+                }
+                
                 LogEvent(curMsg);
             }
 

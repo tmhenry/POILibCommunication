@@ -113,7 +113,8 @@ namespace POILibCommunication
     {
         public abstract byte[] getPacket();
 
-        public double timestamp;
+        private double timestamp;
+        protected byte messageType;
 
         public override void serialize(byte[] buffer, ref int offset)
         {
@@ -141,6 +142,7 @@ namespace POILibCommunication
         }
 
         public Double Timestamp { get { return timestamp; } }
+        public int MessageType { get { return (int)messageType; } }
 
         protected static int MetadataSize { get { return sizeof(double); } }
 

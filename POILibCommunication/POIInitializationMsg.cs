@@ -30,9 +30,13 @@ namespace POILibCommunication
             } 
         }
 
-        public POIHelloMsg() { }
+        public POIHelloMsg() 
+        {
+            messageType = POIMsgDefinition.POI_HELLO;
+        }
         public POIHelloMsg(int myUserType, int myConnType, string myUserName)
         {
+            messageType = POIMsgDefinition.POI_HELLO;
             userType = (byte)myUserType;
             connectionType = (byte)myConnType;
             userName = myUserName;
@@ -104,9 +108,14 @@ namespace POILibCommunication
         static int size = fieldSize;
         static public int Size { get { return size; } }
 
-        public POIWelcomeMsg() { }
+        public POIWelcomeMsg() 
+        {
+            messageType = POIMsgDefinition.POI_WELCOME;
+        }
+
         public POIWelcomeMsg(WelcomeStatus myStatus)
         {
+            messageType = POIMsgDefinition.POI_WELCOME;
             status = myStatus;
         }
 

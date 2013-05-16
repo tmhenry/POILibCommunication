@@ -117,25 +117,7 @@ namespace POILibCommunication
                     parseWelcomeMsg(data, offset);
                     break;
 
-                //Broadcast:
-                case POIMsgDefinition.POI_BROADCASTBEGIN:
-                    break;
-                case POIMsgDefinition.POI_BROADCASTCONTENT:
-                    break;
-                case POIMsgDefinition.POI_BROADCASTEND:
-                    break;
-
-                case POIMsgDefinition.POI_BROADCASTREQUESTMISSINGPACKET:
-                    parseBroadcastRequestMissingPacketMsg(data, offset);
-                    break;
-
-                case POIMsgDefinition.POI_BROADCASTBEGINACK:
-                    parseBroadcastBeginAckMsg(data, offset);
-                    break;
-
-                case POIMsgDefinition.POI_BROADCASTENDACK:
-                    parseBroadcastEndAckMsg(data, offset);
-                    break;
+   
 
                 case POIMsgDefinition.POI_PRESENTATION_CONTROL:
                     parsePresControlMsg(data, offset);
@@ -149,20 +131,8 @@ namespace POILibCommunication
                     parseUserComments(data, offset);
                     break;
 
-                case POIMsgDefinition.POI_PUSH:
-                    parsePushMsg(data, offset);
-                    break;
-
                 case POIMsgDefinition.POI_WHITEBOARD_CONTROL:
                     parseWhiteboardCtrlMsg(data, offset);
-                    break;
-
-                case POIMsgDefinition.POI_WHITEBOARD_SHOW:
-                    parseWhiteboardShow(data, offset);
-                    break;
-
-                case POIMsgDefinition.POI_WHITEBOARD_HIDE:
-                    parseWhiteboardHide(data, offset);
                     break;
 
                 case POIMsgDefinition.POI_SESSION_CONTROL:
@@ -173,8 +143,6 @@ namespace POILibCommunication
                     parsePointerCtrlMsg(data, offset);
                     break;
 
-                case POIMsgDefinition.POI_AUDIO_CONTENT:
-                    break;
             }
                               
         }

@@ -60,11 +60,15 @@ namespace POILibCommunication
             this.presId = presIDFromUploader;
             info[@"name"] = name;
             info[@"presentor"] = presentor;
+
+            messageType = POIMsgDefinition.POI_PRESENTATION_CONTENT;
         }
         public POIPresentation()
         {
             sizeChanged = true;
             info[@"name"] = @"CS152";
+
+            messageType = POIMsgDefinition.POI_PRESENTATION_CONTENT;
         }
 
         public POIPresentation(int id)
@@ -72,6 +76,8 @@ namespace POILibCommunication
             sizeChanged = true;
             presId = id;
             info[@"name"] = @"CS152";
+
+            messageType = POIMsgDefinition.POI_PRESENTATION_CONTENT;
         }
 
         public void LoadPresentationFromStorage()
@@ -229,8 +235,25 @@ namespace POILibCommunication
             serialize(packet, ref offset);
 
             return composePacket(POIMsgDefinition.POI_PRESENTATION_CONTENT, packet);
+        }
 
-            
+        static public POIPresentation LoadPresFromContentServer(int contentId)
+        {
+            POIPresentation pres = new POIPresentation();
+            int offset = 0;
+
+            byte[] content = POIContentServerHelper.getPresInfo(contentId);
+
+            if (content != null)
+            {
+                pres.deserialize(content, ref offset);
+            }
+            else
+            {
+                Console.WriteLine("Cannot get archive from content server!");
+            }
+
+            return pres;
         }
     }
 }

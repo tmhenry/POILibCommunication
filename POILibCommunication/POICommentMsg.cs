@@ -190,6 +190,7 @@ namespace POILibCommunication
 
             //To do: process the time
             //serializeFloat(buffer, ref offset, time);
+            serializeDouble(buffer, ref offset, time);
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
@@ -213,7 +214,7 @@ namespace POILibCommunication
         List<POIBeizerPathPoint> points = new List<POIBeizerPathPoint>();
 
         int size;
-        int fieldSize = 5 * sizeof(int);
+        int fieldSize = 4 * sizeof(int) + 3 * sizeof(byte);
 
         public int Depth { get { return depth; } set { depth = value; } }
         public int NumPoints { get { return numPoints; } set { numPoints = value; } }
@@ -329,6 +330,7 @@ namespace POILibCommunication
         public POIComment()
         {
             size = fieldSize;
+            messageType = POIMsgDefinition.POI_USER_COMMENTS;
         }
 
         public void calculateSize()
@@ -371,6 +373,9 @@ namespace POILibCommunication
             int offset = 0;
             serialize(packet, ref offset);
 
+            Console.WriteLine("Size is " + size);
+
+            //return packet;
             return composePacket(POIMsgDefinition.POI_USER_COMMENTS, packet);
         }
 
@@ -422,6 +427,8 @@ namespace POILibCommunication
 
                 size += text.Size;
             }
+
+            Console.WriteLine("Size is " + size);
         }
 
     }

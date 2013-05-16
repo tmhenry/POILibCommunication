@@ -57,6 +57,7 @@ namespace POILibCommunication
 
         public POISessionMsg()
         {
+            messageType = POIMsgDefinition.POI_SESSION_CONTROL;
             initInfoDictionary();
             updateSize();
         }

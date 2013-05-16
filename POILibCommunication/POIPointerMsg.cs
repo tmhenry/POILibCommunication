@@ -25,11 +25,15 @@ namespace POILibCommunication
         public double Timestamp { get { return timestamp; } }
 
         //Constructor
-        public POIPointerMsg() { }
+        public POIPointerMsg()
+        {
+            messageType = POIMsgDefinition.POI_POINTER_CONTROL;
+        }
 
         //Constructor
         public POIPointerMsg(PointerCtrlType myType, float myX, float myY, double time)
         {
+            messageType = POIMsgDefinition.POI_POINTER_CONTROL;
             type = myType;
             x = myX;
             y = myY;

@@ -103,11 +103,13 @@ namespace POILibCommunication
 
         public POIWhiteboardMsg() 
         {
+            messageType = POIMsgDefinition.POI_WHITEBOARD_CONTROL;
             SetWhiteBackground();
             
         }
         public POIWhiteboardMsg(int myCtrlType, int mySlideIndex)
         {
+            messageType = POIMsgDefinition.POI_WHITEBOARD_CONTROL;
             slide = mySlideIndex;
             ctrlType = myCtrlType;
         }
@@ -133,6 +135,7 @@ namespace POILibCommunication
 
             serialize(packet, ref offset);
 
+            //return packet;
             return composePacket(POIMsgDefinition.POI_WHITEBOARD_CONTROL, packet);
         }
     }
