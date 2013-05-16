@@ -333,8 +333,8 @@ namespace POILibCommunication
 
         public void calculateSize()
         {
-            //size = fieldSize + MetadataSize;
-            size = fieldSize;
+            size = fieldSize + MetadataSize;
+            //size = fieldSize;
 
             foreach (POIBeizerPath path in paths)
             {
@@ -376,7 +376,7 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
-            //base.serialize(buffer, ref offset);
+            base.serialize(buffer, ref offset);
             serializeInt32(buffer, ref offset, frameNum);
             serializeInt32(buffer, ref offset, numBeizerPath);
             serializeInt32(buffer, ref offset, numText);
@@ -394,10 +394,10 @@ namespace POILibCommunication
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
-            //size = fieldSize + MetadataSize;
-            size = fieldSize;
+            size = fieldSize + MetadataSize;
+            //size = fieldSize;
 
-            //base.deserialize(buffer, ref offset);
+            base.deserialize(buffer, ref offset);
             deserializeInt32(buffer, ref offset, ref frameNum);
             deserializeInt32(buffer, ref offset, ref numBeizerPath);
             deserializeInt32(buffer, ref offset, ref numText);
