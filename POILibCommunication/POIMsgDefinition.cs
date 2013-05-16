@@ -188,7 +188,7 @@ namespace POILibCommunication
 
     #endregion
 
-    static class POIMsgDefinition
+    public static class POIMsgDefinition
     {
         //Global constants
         public const int POI_MAXPARAMETERSSIZE = 100;

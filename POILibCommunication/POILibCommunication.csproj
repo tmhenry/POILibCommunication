@@ -60,6 +60,8 @@
     <Compile Include="POIInitializationMsg.cs" />
     <Compile Include="POIKernel.cs" />
     <Compile Include="POIMessage.cs" />
+    <Compile Include="POIMessageFactory.cs" />
+    <Compile Include="POIMetadataArchive.cs" />
     <Compile Include="POIMsgCBDefinitions.cs" />
     <Compile Include="POIMsgDefinition.cs" />
     <Compile Include="POIMsgDelegateContainer.cs" />

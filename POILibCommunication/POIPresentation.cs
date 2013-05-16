@@ -229,6 +229,8 @@ namespace POILibCommunication
             serialize(packet, ref offset);
 
             return composePacket(POIMsgDefinition.POI_PRESENTATION_CONTENT, packet);
+
+            
         }
     }
 }
