@@ -41,15 +41,19 @@ namespace POILibCommunication
 
             archiveFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".meta");
             logFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".txt");
-
-            FileStream fs = new FileStream(logFn, FileMode.Create);
-            sw = new StreamWriter(fs);
+            
         }
 
         
 
         public void LogEvent(POIMessage message)
         {
+            if (sw == null)
+            {
+                FileStream fs = new FileStream(logFn, FileMode.Create);
+                sw = new StreamWriter(fs);
+            }
+
             DataDict.Add(message.Timestamp, message);
             sw.WriteLine(message.Timestamp + " : " + message.MessageType);
         }
