@@ -46,6 +46,8 @@ namespace POILibCommunication
             GetServerAddr,
             KeywordsSearch,
             CreateSession,
+            SearchSession,
+            EndSession,
             Unknown
         }
 
@@ -209,7 +211,23 @@ namespace POILibCommunication
             return sessionId;
         }
 
+        public static void EndSession(Dictionary<string, string> sessionEntry)
+        {
+            //Prepare the POST data
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
 
+            string sesEntryStr = jsonParser.Serialize(sessionEntry);
+            string postDataStr = @"type=" + (int)RequestType.EndSession + "&data=" + sesEntryStr;
+
+            try
+            {
+                string response = sendRequest(postDataStr);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
         //Utility functions for web service, return null response if error occurs
         public static string sendRequest(string msg)
         {
