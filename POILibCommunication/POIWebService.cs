@@ -39,6 +39,13 @@ namespace POILibCommunication
             Image,
             ResolveServerAddr,
             UploadPresentation,
+            DeletePresentation,
+            GetPresentationCover,
+            GetPresentationList,
+            GetAccessiblePresentationList,
+            GetServerAddr,
+            KeywordsSearch,
+            CreateSession,
             Unknown
         }
 
@@ -173,6 +180,33 @@ namespace POILibCommunication
             }
 
             return presId;
+        }
+
+        public static int CreateSession(Dictionary<string, string> sessionEntry)
+        {
+            //Prepare the POST data
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
+
+            string sesEntryStr = jsonParser.Serialize(sessionEntry);
+            string postDataStr = @"type=" + (int)RequestType.CreateSession + "&data=" + sesEntryStr;
+
+            int sessionId = -1;
+
+            try
+            {
+                string response = sendRequest(postDataStr);
+                if (response != null)
+                {
+                    Dictionary<string, string> dict = parseResponseSingle(response);
+                    sessionId = Int32.Parse(dict["SessionId"]);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+
+            return sessionId;
         }
 
 
