@@ -14,8 +14,8 @@ namespace POILibCommunication
         public static POIComServer SystemDataHandler { get; set; }
         public static Dictionary<string, POIUser> UserProfiles { get; set; }
 
-        public static String ContentServerHome { get { return "http://192.168.0.143/"; } }
-        public static String DNSServerHome { get { return "http://192.168.0.143/dnsServer/interface.php"; } }
+        public static String ContentServerHome { get { return "http://localhost/"; } }
+        public static String DNSServerHome { get { return "http://localhost/dnsServer/interface.php"; } }
         public static String KeywordsFileName { get { return "POI_Keywords.txt";} }
         //public static POIUIScheduler Scheduler { get; set; }
     }

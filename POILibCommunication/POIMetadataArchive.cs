@@ -30,6 +30,9 @@ namespace POILibCommunication
         int presId;
         int sessionId;
         string archiveFn;
+        string logFn;
+
+        StreamWriter sw;
 
         public POIMetadataArchive(int pId, int sId)
         {
@@ -37,12 +40,18 @@ namespace POILibCommunication
             sessionId = sId;
 
             archiveFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".meta");
+            logFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".txt");
+
+            FileStream fs = new FileStream(logFn, FileMode.Create);
+            sw = new StreamWriter(fs);
         }
+
+        
 
         public void LogEvent(POIMessage message)
         {
             DataDict.Add(message.Timestamp, message);
-            Console.WriteLine("Haha");
+            sw.WriteLine(message.Timestamp + " : " + message.MessageType);
         }
 
         public Dictionary<string, POIMessage> MetadataList
@@ -69,6 +78,9 @@ namespace POILibCommunication
 
             //Upload the archive to the content server
             POIContentServerHelper.uploadContent(presId, archiveFn);
+
+            sw.Close();
+            POIContentServerHelper.uploadContent(presId, logFn);
         }
 
         public void ReadArchive()
@@ -76,19 +88,19 @@ namespace POILibCommunication
             //Clear the current container
             DataDict.Clear();
 
-            //Read the file into memory
-            FileStream fs = new FileStream(archiveFn, FileMode.Open);
-            MemoryStream ms = new MemoryStream();
-            ms.SetLength(fs.Length);
-            fs.Read(ms.GetBuffer(), 0, (int)ms.Length);
-            fs.Close();
+            //Read the online into memory
+            byte[] buffer = POIContentServerHelper.getMetaArchive(presId, sessionId);
+            if (buffer == null)
+            {
+                Console.WriteLine("Cannot retrieve metadata archive!");
+                return;
+            }
 
-            byte[] buffer = ms.GetBuffer();
             int offset = 0;
             byte msgTypeByte = 0;
             POIMessage curMsg = null;
 
-            while (offset < ms.Length)
+            while (offset < buffer.Length)
             {
                 
                 try
@@ -109,8 +121,6 @@ namespace POILibCommunication
                 
                 LogEvent(curMsg);
             }
-
-            ms.Close();
         }
 
     }

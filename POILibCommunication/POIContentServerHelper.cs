@@ -19,7 +19,9 @@ namespace POILibCommunication
             Static = 0,
             Animation,
             AnimationCover,
-            PresInfo
+            PresInfo,
+            PresCover,
+            MetaArchive
         };
 
         static public String ContentServerHome
@@ -29,30 +31,41 @@ namespace POILibCommunication
 
         static public byte[] getPresInfo(int presId)
         {
-            return getContent(presId, FileType.PresInfo, 0);
+            return getContent(presId, FileType.PresInfo, 0, 0);
         }
 
         static public byte[] getStaticSlide(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.Static, slideIndex);
+            return getContent(presId, FileType.Static, slideIndex, 0);
         }
 
         static public byte[] getAnimationSlide(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.Animation, slideIndex);
+            return getContent(presId, FileType.Animation, slideIndex, 0);
         }
 
         static public byte[] getAnimationSlideCover(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.AnimationCover, slideIndex);
+            return getContent(presId, FileType.AnimationCover, slideIndex, 0);
         }
 
-        static private byte[] getContent(int presId, FileType fileType, int slideIndex)
+        static public byte[] getPresCover(int presId)
+        {
+            return getContent(presId, FileType.PresCover, 0, 0);
+        }
+
+        static public byte[] getMetaArchive(int presId, int sessionId)
+        {
+            return getContent(presId, FileType.MetaArchive, 0, sessionId);
+        }
+
+        static private byte[] getContent(int presId, FileType fileType, int slideIndex, int sessionId)
         {
             String reqUrl = ContentServerHome + "content.php?"
                             + "presId=" + presId + "&"
                             + "fileType=" + (int)fileType + "&"
-                            + "slideIndex=" + slideIndex;
+                            + "slideIndex=" + slideIndex + "&"
+                            + "sessionId=" + sessionId;
 
             if(webClient == null) webClient = new WebClient();
 
