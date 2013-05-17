@@ -27,7 +27,6 @@ namespace POILibCommunication
         //Data members
         POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
 
-        Int64 size = 0;
         int presId;
         int sessionId;
         string archiveFn;
