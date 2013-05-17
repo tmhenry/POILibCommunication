@@ -25,7 +25,7 @@ namespace POILibCommunication
     public class POIMetadataArchive
     {
         //Data members
-        POIMetadataContainer<double> DataDict = new POIMetadataContainer<double>();
+        POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
 
         Int64 size = 0;
         int presId;
@@ -46,6 +46,15 @@ namespace POILibCommunication
             Console.WriteLine("Haha");
         }
 
+        public Dictionary<string, POIMessage> MetadataList
+        {
+            get
+            {
+                Dictionary<string, POIMessage> dataToSerialize = DataDict.Keys.ToDictionary(p => p.ToString(), p => DataDict[p]);
+                return dataToSerialize;
+            }
+        }
+
         public void WriteArchive()
         {
             FileStream fs = new FileStream(archiveFn, FileMode.Create);
@@ -54,8 +63,6 @@ namespace POILibCommunication
             foreach (POIMessage message in DataDict.Values)
             {
                 byte[] data = message.getPacket();
-                Console.WriteLine(data.Length);
-                if(message.GetType() == typeof(POIComment))
                 bw.Write(data);
             }
 
@@ -85,7 +92,6 @@ namespace POILibCommunication
             while (offset < ms.Length)
             {
                 
-
                 try
                 {
                     msgTypeByte = buffer[offset];
@@ -95,6 +101,7 @@ namespace POILibCommunication
 
                     curMsg.deserialize(buffer, ref offset);
                     Console.WriteLine(offset);
+                    
                 }
                 catch (Exception e)
                 {
