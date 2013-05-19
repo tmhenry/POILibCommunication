@@ -3,11 +3,6 @@ C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibC
 C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
 C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
 C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\obj\Debug\ResolveAssemblyReference.cache
@@ -17,8 +12,6 @@ C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.
 C:\Users\Henry\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
 C:\Users\TEEVE\Desktop\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
-C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
@@ -26,3 +19,10 @@ C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\bin\D
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
 C:\Users\HenryXia\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.dll
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\bin\Debug\System.Net.Http.xml
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
+C:\Users\Henry\Documents\GitHub\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
