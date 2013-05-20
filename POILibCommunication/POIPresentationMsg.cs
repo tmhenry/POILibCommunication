@@ -10,8 +10,8 @@ namespace POILibCommunication
         int ctrlType;
         int slideIndex;
 
-        public int CtrlType { get { return ctrlType; } }
-        public int SlideIndex { get { return slideIndex; } }
+        public int CtrlType { get { return ctrlType; } set { ctrlType = value; } }
+        public int SlideIndex { get { return slideIndex; } set { slideIndex = value; } }
 
         const int fieldSize = 2 * sizeof(int);
         static int size = fieldSize + MetadataSize;

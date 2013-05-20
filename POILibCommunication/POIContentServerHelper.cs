@@ -12,7 +12,7 @@ namespace POILibCommunication
 {
     public class POIContentServerHelper
     {
-        static WebClient webClient;
+        //static WebClient webClient;
 
         public enum FileType
         {
@@ -67,16 +67,21 @@ namespace POILibCommunication
                             + "slideIndex=" + slideIndex + "&"
                             + "sessionId=" + sessionId;
 
-            if(webClient == null) webClient = new WebClient();
+            //if(webClient == null) webClient = new WebClient();
+            using (WebClient webClient = new WebClient())
+            {
+                Console.WriteLine("Getting content!");
+                webClient.Proxy = null;
 
-            try
-            {
-                return webClient.DownloadData(reqUrl);
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine(ex);
-                return null;
+                try
+                {
+                    return webClient.DownloadData(reqUrl);
+                }
+                catch (WebException ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
             }
             
         }
@@ -85,18 +90,38 @@ namespace POILibCommunication
         {
             String reqUrl = ContentServerHome + "store.php?" + "presId=" + presId;
 
-            if (webClient == null) webClient = new WebClient();
-
-            try
+            //if (webClient == null) webClient = new WebClient();
+            using (WebClient webClient = new WebClient())
             {
-                byte[] response = webClient.UploadFile(reqUrl, "POST", fileName);
-                string str = ASCIIEncoding.UTF8.GetString(response);
+                try
+                {
+                    byte[] response = webClient.UploadFile(reqUrl, "POST", fileName);
+                    string str = ASCIIEncoding.UTF8.GetString(response);
 
-                Console.WriteLine(":");
+                    Console.WriteLine(":");
+                }
+                catch (WebException ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
-            catch (WebException ex)
+        }
+
+        static public string getAudioSyncReference(int presId, int sessionId)
+        {
+            String reqUrl = "http://192.168.0.100/3/audio/timequery/query.php?pid=1";
+            
+            using (WebClient webClient = new WebClient())
             {
-                Console.WriteLine(ex);
+                try
+                {
+                    return webClient.DownloadString(reqUrl);
+                }
+                catch (WebException ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
             }
         }
 

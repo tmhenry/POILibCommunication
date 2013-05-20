@@ -22,18 +22,51 @@ namespace POILibCommunication
 
     }
 
-    public class POIMetadataArchive
+    public class POIMetadataArchive 
     {
         //Data members
         POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
+        Dictionary<int, int> DataIndexer = new Dictionary<int, int>();
 
         int presId;
         int sessionId;
         string archiveFn;
         string logFn;
+        double audioTimeReference;
+        double sessionTimeReference;
+        
 
-        StreamWriter sw;
+        //Properties
+        public double AudioTimeReference
+        {
+            get { return audioTimeReference; }
+            set { audioTimeReference = value; }
+        }
 
+        public double SessionTimeReference
+        {
+            get { return sessionTimeReference; }
+            set { sessionTimeReference = value; }
+        }
+
+        public Dictionary<string, int> MetadataIndexer
+        {
+            get
+            {
+                Dictionary<string, int> dataToSerialize = DataIndexer.Keys.ToDictionary(p => p.ToString(), p => DataIndexer[p]);
+                return dataToSerialize;
+            }
+        }
+
+        public List<POIMessage> MetadataList
+        {
+            get
+            {
+                return DataDict.Values.ToList();
+            }
+        }
+
+        //Constructor
         public POIMetadataArchive(int pId, int sId)
         {
             presId = pId;
@@ -41,30 +74,47 @@ namespace POILibCommunication
 
             archiveFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".meta");
             logFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".txt");
-            
+
+            //Record the archive creation time as the time reference
+            sessionTimeReference = POITimestamp.ConvertToUnixTimestamp(DateTime.Now);
         }
 
-        
 
+
+        //Functions
         public void LogEvent(POIMessage message)
         {
-            if (sw == null)
+            if (message.MessageType == POIMsgDefinition.POI_POINTER_CONTROL)
             {
-                FileStream fs = new FileStream(logFn, FileMode.Create);
-                sw = new StreamWriter(fs);
+                POIPointerMsg ptrMsg = message as POIPointerMsg;
+                message.setTimestampToDouble(ptrMsg.Timestamp);
+                DataDict.Add(ptrMsg.Timestamp, ptrMsg);
             }
+            else
+                DataDict.Add(message.Timestamp, message);
 
-            DataDict.Add(message.Timestamp, message);
-            sw.WriteLine(message.Timestamp + " : " + message.MessageType);
+            Console.WriteLine("Message with type " + message.MessageType + " and timestamp " + message.Timestamp);
         }
 
-        public Dictionary<string, POIMessage> MetadataList
+        public void LogEventAndUpdateEventIndexer(POIPresCtrlMsg message)
         {
-            get
+            //The indexer is the index of the event causing the slide number change
+            if (message.CtrlType == (int)PresCtrlType.Next)
             {
-                Dictionary<string, POIMessage> dataToSerialize = DataDict.Keys.ToDictionary(p => p.ToString(), p => DataDict[p]);
-                return dataToSerialize;
+                if (!DataIndexer.ContainsKey(message.SlideIndex + 1))
+                {
+                    DataIndexer[message.SlideIndex + 1] = DataDict.Values.Count;
+                }
             }
+            else if(message.CtrlType == (int)PresCtrlType.Jump)
+            {
+                if (!DataIndexer.ContainsKey(message.SlideIndex))
+                {
+                    DataIndexer[message.SlideIndex] = DataDict.Values.Count;
+                }
+            }
+
+            LogEvent(message);
         }
 
         public void WriteArchive()
@@ -72,25 +122,41 @@ namespace POILibCommunication
             FileStream fs = new FileStream(archiveFn, FileMode.Create);
             BinaryWriter bw = new BinaryWriter(fs);
 
+            //Write the session timing reference
+            bw.Write(sessionTimeReference);
+
+            //Write the audio timing reference
+            bw.Write(audioTimeReference);
+
+            //Write the number of events
+            bw.Write(DataDict.Count);
+
             foreach (POIMessage message in DataDict.Values)
             {
                 byte[] data = message.getPacket();
                 bw.Write(data);
             }
 
+            //Write the number of indexer contents
+            bw.Write(DataIndexer.Count);
+
+            foreach (int key in DataIndexer.Keys)
+            {
+                bw.Write(key);
+                bw.Write(DataIndexer[key]);
+            }
+
             bw.Close();
 
             //Upload the archive to the content server
             POIContentServerHelper.uploadContent(presId, archiveFn);
-
-            sw.Close();
-            POIContentServerHelper.uploadContent(presId, logFn);
         }
 
         public void ReadArchive()
         {
             //Clear the current container
             DataDict.Clear();
+            DataIndexer.Clear();
 
             //Read the online into memory
             byte[] buffer = POIContentServerHelper.getMetaArchive(presId, sessionId);
@@ -100,13 +166,21 @@ namespace POILibCommunication
                 return;
             }
 
-            int offset = 0;
+            MemoryStream ms = new MemoryStream(buffer);
+            BinaryReader br = new BinaryReader(ms);
+
+            sessionTimeReference = br.ReadDouble();
+            audioTimeReference = br.ReadDouble();
+            
+            //Read the number of messages
+            int numMsgs = br.ReadInt32();
+            int initialOffset = (int) br.BaseStream.Position;
+            int offset = initialOffset;
             byte msgTypeByte = 0;
             POIMessage curMsg = null;
 
-            while (offset < buffer.Length)
+            for (int i = 0; i < numMsgs; i++)
             {
-                
                 try
                 {
                     msgTypeByte = buffer[offset];
@@ -116,14 +190,27 @@ namespace POILibCommunication
 
                     curMsg.deserialize(buffer, ref offset);
                     Console.WriteLine(offset);
-                    
+
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("WTF");
                 }
-                
+
                 LogEvent(curMsg);
+            }
+
+            //Seek to the current offset within the buffer
+            br.BaseStream.Seek(offset, SeekOrigin.Begin);
+            
+            //Read the number of indexer contents
+            int numIndexer = br.ReadInt32();
+            for (int i = 0; i < numIndexer; i++)
+            {
+                int key = br.ReadInt32();
+                int val = br.ReadInt32();
+
+                DataIndexer.Add(key, val);
             }
         }
 

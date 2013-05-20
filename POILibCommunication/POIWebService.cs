@@ -236,6 +236,7 @@ namespace POILibCommunication
             using (WebClient wc = new WebClient())
             {
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+                wc.Proxy = null;
 
                 try
                 {
