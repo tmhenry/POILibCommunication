@@ -93,7 +93,7 @@ namespace POILibCommunication
             else
                 DataDict.Add(message.Timestamp, message);
 
-            Console.WriteLine("Message with type " + message.MessageType + " and timestamp " + message.Timestamp);
+            //Console.WriteLine("Message with type " + message.MessageType + " and timestamp " + message.Timestamp);
         }
 
         public void LogEventAndUpdateEventIndexer(POIPresCtrlMsg message)
@@ -189,7 +189,7 @@ namespace POILibCommunication
                     curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
 
                     curMsg.deserialize(buffer, ref offset);
-                    Console.WriteLine(offset);
+                    //Console.WriteLine(offset);
 
                 }
                 catch (Exception e)

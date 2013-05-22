@@ -172,7 +172,8 @@ namespace POILibCommunication
         End,
         Join,
         Leave,
-        Created
+        Created,
+        AudioStart
     }
 
     #endregion

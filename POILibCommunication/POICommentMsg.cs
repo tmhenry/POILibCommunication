@@ -299,8 +299,8 @@ namespace POILibCommunication
                 POIBeizerPathPoint point = new POIBeizerPathPoint();
                 point.deserialize(buffer, ref offset);
                 points.Add(point);
-                Console.WriteLine("Point is" + point.X + " " + point.Y);
-                Console.WriteLine("time is" + point.Time);
+                //Console.WriteLine("Point is" + point.X + " " + point.Y);
+                //Console.WriteLine("time is" + point.Time);
             }
 
         }
@@ -373,7 +373,7 @@ namespace POILibCommunication
             int offset = 0;
             serialize(packet, ref offset);
 
-            Console.WriteLine("Size is " + size);
+            //Console.WriteLine("Size is " + size);
 
             //return packet;
             return composePacket(POIMsgDefinition.POI_USER_COMMENTS, packet);
@@ -428,7 +428,7 @@ namespace POILibCommunication
                 size += text.Size;
             }
 
-            Console.WriteLine("Size is " + size);
+            //Console.WriteLine("Size is " + size);
         }
 
     }

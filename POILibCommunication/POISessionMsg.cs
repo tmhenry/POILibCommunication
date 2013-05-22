@@ -67,6 +67,11 @@ namespace POILibCommunication
             CtrlType = (int)SessionCtrlType.Start;
         }
 
+        public void initSessionAudioStartMsg()
+        {
+            CtrlType = (int)SessionCtrlType.AudioStart;
+        }
+
         public void initSessionEndMsg()
         {
             CtrlType = (int)SessionCtrlType.End;
@@ -93,7 +98,7 @@ namespace POILibCommunication
 
         private void updateSize()
         {
-            size = fieldSize;
+            size = fieldSize + MetadataSize;
 
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
             string infoString = jsonParser.Serialize(info);
@@ -105,7 +110,9 @@ namespace POILibCommunication
 
         public override void deserialize(byte[] buffer, ref int offset)
         {
-            size = fieldSize;
+            size = fieldSize + MetadataSize;
+
+            base.deserialize(buffer, ref offset);
 
             //Deserialize the info length
             int infoLength = 0;
@@ -123,6 +130,8 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
+            base.serialize(buffer, ref offset);
+
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
             string infoString = jsonParser.Serialize(info);
             byte[] infoBytes = Encoding.UTF8.GetBytes(infoString);
