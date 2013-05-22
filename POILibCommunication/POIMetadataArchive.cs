@@ -117,10 +117,42 @@ namespace POILibCommunication
             LogEvent(message);
         }
 
+        private void updateTimeReference()
+        {
+            if (sessionTimeReference >= audioTimeReference)
+            {
+                sessionTimeReference = audioTimeReference;
+            }
+            else
+            {
+                //Choose the minimum time of the first event and audioTimeReference
+                if (DataDict.Keys.Count > 0)
+                {
+                    sessionTimeReference = Math.Min(audioTimeReference, DataDict.Keys[0]);
+                }
+                else
+                {
+                    sessionTimeReference = audioTimeReference;
+                }
+                
+            }
+        }
+
         public void WriteArchive()
         {
             FileStream fs = new FileStream(archiveFn, FileMode.Create);
             BinaryWriter bw = new BinaryWriter(fs);
+
+            //Update the time reference to remove unnecessary waiting time
+            try
+            {
+                updateTimeReference();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            
 
             //Write the session timing reference
             bw.Write(sessionTimeReference);
