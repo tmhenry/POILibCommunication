@@ -119,6 +119,7 @@ namespace POILibCommunication
 
         private void updateTimeReference()
         {
+            //Update the session timereference
             if (sessionTimeReference >= audioTimeReference)
             {
                 sessionTimeReference = audioTimeReference;
@@ -135,6 +136,12 @@ namespace POILibCommunication
                     sessionTimeReference = audioTimeReference;
                 }
                 
+            }
+
+            //Update the event log for the first slide
+            if (DataIndexer.ContainsKey(0))
+            {
+                DataIndexer.Remove(0);
             }
         }
 
