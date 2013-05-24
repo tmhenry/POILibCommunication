@@ -119,6 +119,12 @@ namespace POILibCommunication
 
         private void updateTimeReference()
         {
+            //Update the audio time reference
+            if (audioTimeReference == 0)
+            {
+                audioTimeReference = sessionTimeReference;
+            }
+
             //Update the session timereference
             if (sessionTimeReference >= audioTimeReference)
             {
