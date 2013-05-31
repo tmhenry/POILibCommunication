@@ -13,6 +13,7 @@ namespace POILibCommunication
         public static POIKernel SystemKernel { get; set; }
         public static POIComServer SystemDataHandler { get; set; }
         public static Dictionary<string, POIUser> UserProfiles { get; set; }
+        public static Dictionary<string, POIUser> WebUserProfiles { get; set; }
 
         public static String ContentServerHome { get { return "http://192.168.0.108/"; } }
         public static String DNSServerHome { get { return "http://192.168.0.108/dnsServer/interface.php"; } }

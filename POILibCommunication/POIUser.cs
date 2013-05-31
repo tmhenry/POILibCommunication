@@ -16,6 +16,7 @@ using System.Net.Sockets;
 namespace POILibCommunication
 {
     public enum ConType {TCP_CONTROL, TCP_DATA, UDP};
+    public enum UserType { MOBILE, WEB}
 
     public class POIUser : POIMsgDelegateContainer, POIPushPullClientMsgCB
     {
@@ -68,8 +69,6 @@ namespace POILibCommunication
 
         #endregion
 
-        
-
         #region Control parser callback functions
 
         
@@ -87,14 +86,19 @@ namespace POILibCommunication
         #endregion
 
         //public Image IconImage;
-       
+        public UserType Type { get; set; }
 
         public POIUser()
         {
             Status = ConnectionStatus.Disconnected;
+            Type = UserType.MOBILE;
         }
 
-        
+        public POIUser(UserType type)
+        {
+            Status = ConnectionStatus.Connected;
+            Type = type;
+        }
 
         public void SendData(byte[] myData, ConType channelType)
         {
