@@ -66,7 +66,7 @@ namespace POILibCommunication
                 int bytesProcessed;
                 int offset = 0;
 
-                //Console.WriteLine("TCP control Received bytes " + args.BytesTransferred);
+                //POIGlobalVar.POIDebugLog("TCP control Received bytes " + args.BytesTransferred);
 
                 while (remainingBytes > 0)
                 {
@@ -100,7 +100,7 @@ namespace POILibCommunication
                             offset += bytesProcessed;
 
                             //Header received completely, read the payload size
-                            //Console.WriteLine("Receiving Header " + myUser.ctrlHeader);
+                            //POIGlobalVar.POIDebugLog("Receiving Header " + myUser.ctrlHeader);
                             PayloadSize = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(Header, 0));
                             PayloadReceived = 0;
                         }
@@ -121,8 +121,8 @@ namespace POILibCommunication
                             remainingBytes -= bytesProcessed;
                             offset += bytesProcessed;
 
-                            //Console.WriteLine("Payload received: " + PayloadReceived);
-                            //Console.WriteLine("remainingPayloadBytes: " + remainingPayloadBytes);
+                            //POIGlobalVar.POIDebugLog("Payload received: " + PayloadReceived);
+                            //POIGlobalVar.POIDebugLog("remainingPayloadBytes: " + remainingPayloadBytes);
                         }
                         else
                         {
@@ -136,10 +136,10 @@ namespace POILibCommunication
                             remainingBytes -= bytesProcessed;
                             offset += bytesProcessed;
 
-                            Console.WriteLine(PayloadReceived);
+                            POIGlobalVar.POIDebugLog(PayloadReceived);
 
                             //Payload received completely
-                            //Console.WriteLine("Here!");
+                            //POIGlobalVar.POIDebugLog("Here!");
                             HeaderReceived = 0;
                             //ParseTCPControlMsg(myUser, mySocket, myUser.ctrlPayload);
 
@@ -152,19 +152,19 @@ namespace POILibCommunication
                 //Start another round of async read
                 try
                 {
-                    //Console.WriteLine("Waiting for reading!");
+                    //POIGlobalVar.POIDebugLog("Waiting for reading!");
                     mySocket.ReceiveAsync(args);
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine("Error in TCP receive!");
+                    POIGlobalVar.POIDebugLog("Error in TCP receive!");
                 }
                 
 
             }
             else
             {
-                Console.WriteLine(args.SocketError + " Bytes received: " + args.BytesTransferred);
+                POIGlobalVar.POIDebugLog(args.SocketError + " Bytes received: " + args.BytesTransferred);
                 mySocket.Close();
 
                 connectionCBDelegate.ConnectionEnded(this);
@@ -188,11 +188,11 @@ namespace POILibCommunication
         {
             if (args.SocketError == SocketError.Success && args.BytesTransferred > 0)
             {
-                //Console.WriteLine("Send successfully!" + e.BytesTransferred);
+                //POIGlobalVar.POIDebugLog("Send successfully!" + e.BytesTransferred);
             }
             else
             {
-                Console.WriteLine("TCP sending error!");
+                POIGlobalVar.POIDebugLog("TCP sending error!");
             }
         }
 

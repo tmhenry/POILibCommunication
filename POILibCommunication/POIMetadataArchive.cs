@@ -93,7 +93,7 @@ namespace POILibCommunication
             else
                 DataDict.Add(message.Timestamp, message);
 
-            //Console.WriteLine("Message with type " + message.MessageType + " and timestamp " + message.Timestamp);
+            //POIGlobalVar.POIDebugLog("Message with type " + message.MessageType + " and timestamp " + message.Timestamp);
         }
 
         public void LogEventAndUpdateEventIndexer(POIPresCtrlMsg message)
@@ -163,7 +163,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                POIGlobalVar.POIDebugLog(e);
             }
             
 
@@ -207,7 +207,7 @@ namespace POILibCommunication
             byte[] buffer = POIContentServerHelper.getMetaArchive(presId, sessionId);
             if (buffer == null)
             {
-                Console.WriteLine("Cannot retrieve metadata archive!");
+                POIGlobalVar.POIDebugLog("Cannot retrieve metadata archive!");
                 return;
             }
 
@@ -234,12 +234,12 @@ namespace POILibCommunication
                     curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
 
                     curMsg.deserialize(buffer, ref offset);
-                    //Console.WriteLine(offset);
+                    //POIGlobalVar.POIDebugLog(offset);
 
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("WTF");
+                    POIGlobalVar.POIDebugLog("WTF");
                 }
 
                 LogEvent(curMsg);

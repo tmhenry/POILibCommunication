@@ -35,7 +35,7 @@ namespace POILibCommunication
             {
                 if (connection.Type == POIMsgParser.ParserType.Control)
                 {
-                    Console.WriteLine("Connection ended by user!");
+                    POIGlobalVar.POIDebugLog("Connection ended by user!");
 
                     //Reset the user status
                     user.Status = POIUser.ConnectionStatus.Disconnected;
@@ -51,7 +51,7 @@ namespace POILibCommunication
             }
             else //User does not exists
             {
-                Console.WriteLine(@"Error: no user existed!");
+                POIGlobalVar.POIDebugLog(@"Error: no user existed!");
             }
         }
 
@@ -89,7 +89,7 @@ namespace POILibCommunication
 
         private void SocketAcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
-            Console.WriteLine(@"Accepting");
+            POIGlobalVar.POIDebugLog(@"Accepting");
 
             //Start authenticating the new connection
             POITCPConnection connection = new POITCPConnection(e.AcceptSocket);
@@ -108,7 +108,7 @@ namespace POILibCommunication
                 }
                 catch (Exception error)
                 {
-                    Console.WriteLine(error.Message);
+                    POIGlobalVar.POIDebugLog(error.Message);
                 }
             }
         }
@@ -160,7 +160,7 @@ namespace POILibCommunication
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    POIGlobalVar.POIDebugLog(e.Message);
                 }
 
                 status = POIWelcomeMsg.WelcomeStatus.CtrlChannelAuthenticated;

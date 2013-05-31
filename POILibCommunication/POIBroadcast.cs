@@ -53,13 +53,13 @@ namespace POILibCommunication
 
                     //Find local address
                     localAddr = ip;
-                    Console.WriteLine(ip.ToString());
+                    POIGlobalVar.POIDebugLog(ip.ToString());
 
                     //Find broadcast address
                     byte[] bcBytes = IPAddress.Broadcast.GetAddressBytes();
                     Array.Copy(localAddr.GetAddressBytes(), bcBytes, 3);
                     broadCastAddr = new IPAddress(bcBytes);
-                    Console.WriteLine(broadCastAddr.ToString());
+                    POIGlobalVar.POIDebugLog(broadCastAddr.ToString());
                 }
             }
 
@@ -114,7 +114,7 @@ namespace POILibCommunication
 
         public unsafe void BroadCastMsg(byte[] msg)
         {
-            Console.WriteLine("Start broadcasting " + msg.Length + " bytes");
+            POIGlobalVar.POIDebugLog("Start broadcasting " + msg.Length + " bytes");
 
             PrepareBroadcastFrame(msg);
 

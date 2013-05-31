@@ -70,7 +70,7 @@ namespace POILibCommunication
             //if(webClient == null) webClient = new WebClient();
             using (WebClient webClient = new WebClient())
             {
-                Console.WriteLine("Getting content!");
+                POIGlobalVar.POIDebugLog("Getting content!");
                 webClient.Proxy = null;
 
                 try
@@ -79,7 +79,7 @@ namespace POILibCommunication
                 }
                 catch (WebException ex)
                 {
-                    Console.WriteLine(ex);
+                    POIGlobalVar.POIDebugLog(ex);
                     return null;
                 }
             }
@@ -98,11 +98,11 @@ namespace POILibCommunication
                     byte[] response = webClient.UploadFile(reqUrl, "POST", fileName);
                     string str = ASCIIEncoding.UTF8.GetString(response);
 
-                    Console.WriteLine(":");
+                    POIGlobalVar.POIDebugLog(":");
                 }
                 catch (WebException ex)
                 {
-                    Console.WriteLine(ex);
+                    POIGlobalVar.POIDebugLog(ex);
                 }
             }
         }
@@ -119,7 +119,7 @@ namespace POILibCommunication
                 }
                 catch (WebException ex)
                 {
-                    Console.WriteLine(ex);
+                    POIGlobalVar.POIDebugLog(ex);
                     return null;
                 }
             }

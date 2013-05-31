@@ -87,7 +87,7 @@ namespace POILibCommunication
             info[@"presentor"] = @"POI";
             for (int i = 0; i < 16; i++)
             {
-                Console.WriteLine("Processing index: " + i);
+                POIGlobalVar.POIDebugLog("Processing index: " + i);
                 POISlide slide = new POIStaticSlide(i, this);
                 Insert(slide);
             }
@@ -138,7 +138,7 @@ namespace POILibCommunication
             }
             else
             {
-                Console.WriteLine("Input presentation has a different id.");
+                POIGlobalVar.POIDebugLog("Input presentation has a different id.");
             }
         }
 
@@ -169,7 +169,7 @@ namespace POILibCommunication
             {
                 serializeInt32(buffer, ref offset, (int)slide.Type);
                 slide.serialize(buffer, ref offset);
-                Console.WriteLine(offset);
+                POIGlobalVar.POIDebugLog(offset);
             }
         }
 
@@ -250,7 +250,7 @@ namespace POILibCommunication
             }
             else
             {
-                Console.WriteLine("Cannot get archive from content server!");
+                POIGlobalVar.POIDebugLog("Cannot get archive from content server!");
             }
 
             return pres;

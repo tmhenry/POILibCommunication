@@ -42,7 +42,7 @@ namespace POILibCommunication
             deserializeInt32(buffer, ref offset, ref ctrlType);
             deserializeInt32(buffer, ref offset, ref slideIndex);
 
-            Console.WriteLine(ctrlType + " " + slideIndex);
+            POIGlobalVar.POIDebugLog(ctrlType + " " + slideIndex);
         }
 
         public override byte[] getPacket()

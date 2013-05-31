@@ -115,7 +115,7 @@ namespace POILibCommunication
             serviceEntry.Add(@"port", Instance.servicePort.ToString());
 
             string serviceEntryStr = jsonParser.Serialize(serviceEntry);
-            Console.WriteLine(serviceEntryStr);
+            POIGlobalVar.POIDebugLog(serviceEntryStr);
 
             string postDataStr = @"type=" + (int)RequestType.Publish + "&data=" + serviceEntryStr;
 
@@ -125,7 +125,7 @@ namespace POILibCommunication
             }
             catch (WebException e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }            
         }
 
@@ -150,7 +150,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }
         }
 
@@ -178,7 +178,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }
 
             return presId;
@@ -205,7 +205,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }
 
             return sessionId;
@@ -225,7 +225,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }
         }
         //Utility functions for web service, return null response if error occurs
@@ -245,7 +245,7 @@ namespace POILibCommunication
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    POIGlobalVar.POIDebugLog(e);
                     return null;
                 }
             }

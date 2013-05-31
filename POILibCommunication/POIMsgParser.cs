@@ -102,7 +102,7 @@ namespace POILibCommunication
             byte cmdType = 0;
             deserializeByte(data, ref offset, ref cmdType);
 
-            Console.WriteLine("Current type is: " + cmdType);
+            POIGlobalVar.POIDebugLog("Current type is: " + cmdType);
 
             //Get the timestamp of the packet
 
@@ -260,7 +260,7 @@ namespace POILibCommunication
             POIHelloMsg msg = new POIHelloMsg();
             msg.deserialize(buffer, ref offset);
 
-            Console.WriteLine(@"Hello");
+            POIGlobalVar.POIDebugLog(@"Hello");
 
             try
             {
@@ -268,7 +268,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("Error in calling hello msg callback!");
+                POIGlobalVar.POIDebugLog("Error in calling hello msg callback!");
             }
             
         }
@@ -278,19 +278,19 @@ namespace POILibCommunication
             POIWelcomeMsg msg = new POIWelcomeMsg();
             msg.deserialize(buffer, ref offset);
 
-            Console.WriteLine(@"Welcome");
+            POIGlobalVar.POIDebugLog(@"Welcome");
         }
 
         private void parsePushMsg(byte[] buffer, int offset)
         {
-            Console.WriteLine("Here in push!");
+            POIGlobalVar.POIDebugLog("Here in push!");
             if (privilegeLevel < Privilege.Viewer || Type != ParserType.Data) return;
 
 
             POIPushMsg msg = new POIPushMsg();
             msg.deserialize(buffer, ref offset);
 
-            Console.WriteLine("Type: " + msg.Type);
+            POIGlobalVar.POIDebugLog("Type: " + msg.Type);
         }
 
         private void parsePresControlMsg(byte[] buffer, int offset)
@@ -306,12 +306,12 @@ namespace POILibCommunication
                 }
                 catch
                 {
-                    Console.WriteLine("No proper handler registered for presentation control message.");
+                    POIGlobalVar.POIDebugLog("No proper handler registered for presentation control message.");
                 }
             }
             else
             {
-                Console.WriteLine("Not proper privilege for the user!");
+                POIGlobalVar.POIDebugLog("Not proper privilege for the user!");
             }
 
             
@@ -335,7 +335,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("No proper delegate for user comment!");
+                POIGlobalVar.POIDebugLog("No proper delegate for user comment!");
             }
         }
 
@@ -350,7 +350,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("No proper delegate for whiteboard control.");
+                POIGlobalVar.POIDebugLog("No proper delegate for whiteboard control.");
             }
         }
 
@@ -381,7 +381,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("No proper delegate for session control.");
+                POIGlobalVar.POIDebugLog("No proper delegate for session control.");
             }
         }
 
@@ -397,7 +397,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("No proper delegate for pointer control.");
+                POIGlobalVar.POIDebugLog("No proper delegate for pointer control.");
             }
         }
 
@@ -413,7 +413,7 @@ namespace POILibCommunication
             }
             catch
             {
-                Console.WriteLine("No proper delegate for audio content.");
+                POIGlobalVar.POIDebugLog("No proper delegate for audio content.");
             }
         }
 

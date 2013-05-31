@@ -173,7 +173,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }*/
         }
 
@@ -244,7 +244,7 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                POIGlobalVar.POIDebugLog(e.Message);
             }
 
             //Increase the handled offset
@@ -326,7 +326,7 @@ namespace POILibCommunication
             }
             catch (IOException e)
             {
-                Console.WriteLine(e);
+                POIGlobalVar.POIDebugLog(e);
             }*/
             
         }
@@ -358,7 +358,7 @@ namespace POILibCommunication
             }
             catch (IOException e)
             {
-                Console.WriteLine(e);
+                POIGlobalVar.POIDebugLog(e);
             }*/
 
             

@@ -39,7 +39,7 @@ namespace POILibCommunication
 
         private void Read_Completed(object sender, SocketAsyncEventArgs args)
         {
-            //Console.WriteLine("Receiving UDP data");
+            //POIGlobalVar.POIDebugLog("Receiving UDP data");
 
             if (args.SocketError == SocketError.Success && args.BytesTransferred > 0)
             {
@@ -71,7 +71,7 @@ namespace POILibCommunication
             }
             else
             {
-                Console.WriteLine(args.SocketError);
+                POIGlobalVar.POIDebugLog(args.SocketError);
             }
 
             //Make sure the receiving is continous
