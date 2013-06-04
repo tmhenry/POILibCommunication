@@ -96,8 +96,16 @@ namespace POILibCommunication
 
         public POIUser(UserType type)
         {
-            Status = ConnectionStatus.Connected;
-            Type = type;
+            if (type == UserType.MOBILE)
+            {
+                Status = ConnectionStatus.Disconnected;
+                Type = UserType.MOBILE;
+            }
+            else
+            {
+                Status = ConnectionStatus.Connected;
+                Type = type;
+            }
         }
 
         public void SendData(byte[] myData, ConType channelType)
