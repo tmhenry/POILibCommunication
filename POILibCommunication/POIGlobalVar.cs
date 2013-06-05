@@ -15,6 +15,7 @@ namespace POILibCommunication
         public static POIComServer SystemDataHandler { get; set; }
         public static Dictionary<string, POIUser> UserProfiles { get; set; }
         public static Dictionary<string, POIUser> WebUserProfiles { get; set; }
+        public static Dictionary<string, POIUser> WebConUserMap { get; set; }
 
         public static String ContentServerHome { get { return "http://192.168.0.130/"; } }
         public static String DNSServerHome { get { return "http://192.168.0.130/dnsServerTest/interface.php"; } }

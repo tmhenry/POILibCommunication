@@ -105,6 +105,7 @@ namespace POILibCommunication
             {
                 Status = ConnectionStatus.Connected;
                 Type = type;
+                UserPrivilege = Privilege.Viewer;
             }
         }
 
