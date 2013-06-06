@@ -7,6 +7,7 @@ using System.Windows.Media;
 
 namespace POILibCommunication
 {
+   
     public class POITextComment : POISerializable
     {
         int depth;
@@ -16,6 +17,10 @@ namespace POILibCommunication
         float y;
         String msg;
 
+        //For audio comments
+        byte[] audioBytes = new byte[0];
+        int audioLength;
+
         public enum OperationMode
         {
             CREATE = 0,
@@ -23,7 +28,8 @@ namespace POILibCommunication
             COLLAPSE,
             POSITOIN_CHANGED,
             CONTENT_CHANGED,
-            DELETE
+            DELETE,
+            AUDIO_CHANGED
         }
 
         int size;
@@ -47,13 +53,50 @@ namespace POILibCommunication
             size = fieldSize;
         }
 
+        public POITextComment(int myDepth, byte[] myAudioBytes)
+        {
+            depth = myDepth;
+            mode = OperationMode.AUDIO_CHANGED;
+
+            audioLength = myAudioBytes.Length;
+            audioBytes = new byte[audioLength];
+            Array.Copy(myAudioBytes, audioBytes, audioLength);
+
+            msg = "";
+
+            calculateSize();
+        }
+
         public void calculateSize()
         {
             System.Text.Encoding encoding = new System.Text.UTF8Encoding();
             length = encoding.GetByteCount(msg);
 
-            fieldSize = 2 * sizeof(float) + 3 * sizeof(int);
-            size = fieldSize + length;
+            if (audioBytes == null) audioLength = 0;
+            else  audioLength = audioBytes.Length;
+
+            switch (mode)
+            {
+                case OperationMode.CREATE:
+                    fieldSize = 2 * sizeof(float) + 4 * sizeof(int);
+                    size = fieldSize + length + audioLength;
+                    break;
+
+                case OperationMode.CONTENT_CHANGED:
+                    fieldSize = 3 * sizeof(int);
+                    size = fieldSize + length;
+                    break;
+
+                case OperationMode.AUDIO_CHANGED:
+                    fieldSize = 3 * sizeof(int);
+                    size = fieldSize + audioLength;
+                    break;
+
+                case OperationMode.POSITOIN_CHANGED:
+                    fieldSize = 2 * sizeof(int) + 2 * sizeof(float);
+                    size = fieldSize;
+                    break;
+            }
         }
 
         public POITextComment(int myDepth, float myX, float myY, String myMsg)
@@ -67,9 +110,10 @@ namespace POILibCommunication
             msg = myMsg;
             System.Text.Encoding encoding = new System.Text.UTF8Encoding();
             length = encoding.GetByteCount(msg);
+            audioLength = 0;
 
-            fieldSize = 2 * sizeof(float) + 3 * sizeof(int);
-            size = fieldSize + length;
+            fieldSize = 2 * sizeof(float) + 4 * sizeof(int);
+            size = fieldSize + length + audioLength;
         }
 
         public override void serialize(byte[] buffer, ref int offset)
@@ -88,6 +132,11 @@ namespace POILibCommunication
 
                 Array.Copy(stringdata, 0, buffer, offset, length);
                 offset += length;
+
+                //Serialize the audio byte length
+                audioLength = audioBytes.Length;
+                serializeInt32(buffer, ref offset, audioLength);
+                serializeByteArray(buffer, ref offset, audioBytes);
             }
             else if(mode == OperationMode.CONTENT_CHANGED)
             {
@@ -100,6 +149,13 @@ namespace POILibCommunication
             {
                 serializeFloat(buffer, ref offset, x);
                 serializeFloat(buffer, ref offset, y);
+            }
+            else if (mode == OperationMode.AUDIO_CHANGED)
+            {
+                //Serialize the audio byte length
+                audioLength = audioBytes.Length;
+                serializeInt32(buffer, ref offset, audioLength);
+                serializeByteArray(buffer, ref offset, audioBytes);
             }
         }
 
@@ -124,8 +180,13 @@ namespace POILibCommunication
                 System.Text.Encoding encoding = new System.Text.UTF8Encoding();
                 msg = encoding.GetString(stringData);
 
-                fieldSize = 2 * sizeof(float) + 3 * sizeof(int);
-                size = fieldSize + length;
+                deserializeInt32(buffer, ref offset, ref audioLength);
+                audioBytes = new byte[audioLength];
+                Array.Copy(buffer, offset, audioBytes, 0, audioLength);
+                offset += audioLength;
+
+                fieldSize = 2 * sizeof(float) + 4 * sizeof(int);
+                size = fieldSize + length + audioLength;
             }
             else if (mode == OperationMode.CONTENT_CHANGED)
             {
@@ -146,6 +207,16 @@ namespace POILibCommunication
 
                 fieldSize = 2 * sizeof(int) + 2 * sizeof(float);
                 size = fieldSize;
+            }
+            else if (mode == OperationMode.AUDIO_CHANGED)
+            {
+                deserializeInt32(buffer, ref offset, ref audioLength);
+                audioBytes = new byte[audioLength];
+                Array.Copy(buffer, offset, audioBytes, 0, audioLength);
+                offset += audioLength;
+
+                fieldSize = 3 * sizeof(int);
+                size = fieldSize + audioLength;
             }
         }
 
@@ -313,8 +384,10 @@ namespace POILibCommunication
         int numText = 0;
         int numBeizerPath = 0;
 
+
         List<POIBeizerPath> paths = new List<POIBeizerPath>();
         List<POITextComment> texts = new List<POITextComment>();
+
 
         int size;
 
@@ -349,6 +422,7 @@ namespace POILibCommunication
                 text.calculateSize();
                 size += text.Size;
             }
+
         }
 
         public void insert(POIBeizerPath path)
@@ -366,6 +440,7 @@ namespace POILibCommunication
 
             size += text.Size;
         }
+
 
         public override byte[] getPacket()
         {
@@ -385,6 +460,7 @@ namespace POILibCommunication
             serializeInt32(buffer, ref offset, frameNum);
             serializeInt32(buffer, ref offset, numBeizerPath);
             serializeInt32(buffer, ref offset, numText);
+            
 
             foreach (POIBeizerPath path in paths)
             {
@@ -395,6 +471,8 @@ namespace POILibCommunication
             {
                 text.serialize(buffer, ref offset);
             }
+
+            
         }
 
         public override void deserialize(byte[] buffer, ref int offset)
@@ -406,6 +484,7 @@ namespace POILibCommunication
             deserializeInt32(buffer, ref offset, ref frameNum);
             deserializeInt32(buffer, ref offset, ref numBeizerPath);
             deserializeInt32(buffer, ref offset, ref numText);
+            
 
 
             paths = new List<POIBeizerPath>();
@@ -427,6 +506,8 @@ namespace POILibCommunication
 
                 size += text.Size;
             }
+
+            
 
             //POIGlobalVar.POIDebugLog("Size is " + size);
         }
