@@ -70,7 +70,9 @@ namespace POILibCommunication
         public void calculateSize()
         {
             System.Text.Encoding encoding = new System.Text.UTF8Encoding();
-            length = encoding.GetByteCount(msg);
+            
+            if (msg == null) length = 0;
+            else length = encoding.GetByteCount(msg);
 
             if (audioBytes == null) audioLength = 0;
             else  audioLength = audioBytes.Length;
@@ -96,6 +98,11 @@ namespace POILibCommunication
                     fieldSize = 2 * sizeof(int) + 2 * sizeof(float);
                     size = fieldSize;
                     break;
+
+                default:
+                    fieldSize = 2 * sizeof(int);
+                    size = fieldSize;
+                    break;
             }
         }
 
@@ -118,9 +125,6 @@ namespace POILibCommunication
 
         public override void serialize(byte[] buffer, ref int offset)
         {
-            System.Text.Encoding encoding = new System.Text.UTF8Encoding();
-            byte[] stringdata = encoding.GetBytes(msg);
-
             serializeInt32(buffer, ref offset, depth);
             serializeInt32(buffer, ref offset, (int)mode);
 
@@ -130,20 +134,34 @@ namespace POILibCommunication
                 serializeFloat(buffer, ref offset, y);
                 serializeInt32(buffer, ref offset, length);
 
-                Array.Copy(stringdata, 0, buffer, offset, length);
-                offset += length;
+                if (length > 0)
+                {
+                    System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+                    byte[] stringdata = encoding.GetBytes(msg);
+                    Array.Copy(stringdata, 0, buffer, offset, length);
+                    offset += length;
+                }
 
                 //Serialize the audio byte length
-                audioLength = audioBytes.Length;
+                if (audioBytes == null) audioLength = 0;
+                else audioLength = audioBytes.Length;
+                
                 serializeInt32(buffer, ref offset, audioLength);
-                serializeByteArray(buffer, ref offset, audioBytes);
+                
+                if(audioLength > 0)
+                    serializeByteArray(buffer, ref offset, audioBytes);
             }
             else if(mode == OperationMode.CONTENT_CHANGED)
             {
                 serializeInt32(buffer, ref offset, length);
 
-                Array.Copy(stringdata, 0, buffer, offset, length);
-                offset += length;
+                if (length > 0)
+                {
+                    System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+                    byte[] stringdata = encoding.GetBytes(msg);
+                    Array.Copy(stringdata, 0, buffer, offset, length);
+                    offset += length;
+                }
             }
             else if (mode == OperationMode.POSITOIN_CHANGED)
             {
@@ -153,9 +171,13 @@ namespace POILibCommunication
             else if (mode == OperationMode.AUDIO_CHANGED)
             {
                 //Serialize the audio byte length
-                audioLength = audioBytes.Length;
+                if (audioBytes == null) audioLength = 0;
+                else audioLength = audioBytes.Length;
+
                 serializeInt32(buffer, ref offset, audioLength);
-                serializeByteArray(buffer, ref offset, audioBytes);
+                
+                if(audioLength > 0)
+                    serializeByteArray(buffer, ref offset, audioBytes);
             }
         }
 
@@ -217,6 +239,11 @@ namespace POILibCommunication
 
                 fieldSize = 3 * sizeof(int);
                 size = fieldSize + audioLength;
+            }
+            else
+            {
+                fieldSize = 2 * sizeof(int);
+                size = fieldSize;
             }
         }
 
@@ -402,7 +429,7 @@ namespace POILibCommunication
 
         public POIComment()
         {
-            size = fieldSize;
+            size = fieldSize + MetadataSize;
             messageType = POIMsgDefinition.POI_USER_COMMENTS;
         }
 
