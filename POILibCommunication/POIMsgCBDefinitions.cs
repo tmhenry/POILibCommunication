@@ -38,7 +38,7 @@ namespace POILibCommunication
     //Handle Presentation control messages
     public interface POIPresentationControlMsgCB
     {
-        void presCtrlMsgReceived(POIPresCtrlMsg msg);
+        void presCtrlMsgReceived(POIPresCtrlMsg msg, POIUser user);
     }
 
     public interface POIRealtimeMsgCB
@@ -56,7 +56,7 @@ namespace POILibCommunication
 
     public interface POICommentCB
     {
-        void handleComment(POIComment comment);
+        void handleComment(POIComment comment, POIUser user);
     }
 
     public interface POIWhiteBoardMsgCB
@@ -64,7 +64,7 @@ namespace POILibCommunication
         void showWhiteBoard();
         void hideWhiteBoard();
 
-        void whiteboardCtrlMsgReceived(POIWhiteboardMsg msg);
+        void whiteboardCtrlMsgReceived(POIWhiteboardMsg msg, POIUser user);
     }
 
     public interface POISessionCtrlMsgCB
@@ -74,7 +74,7 @@ namespace POILibCommunication
 
     public interface POIPointerCtrlMsgCB
     {
-        void pointerCtrlMsgReceived(POIPointerMsg msg);
+        void pointerCtrlMsgReceived(POIPointerMsg msg, POIUser user);
     }
 
     public interface POIAudioContentMsgCB

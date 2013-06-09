@@ -302,7 +302,7 @@ namespace POILibCommunication
 
                 try
                 {
-                    Delegates.PresCtrlHandler.presCtrlMsgReceived(msg);
+                    Delegates.PresCtrlHandler.presCtrlMsgReceived(msg, AssociatedUser);
                 }
                 catch
                 {
@@ -331,7 +331,7 @@ namespace POILibCommunication
 
             try
             {
-                Delegates.CommentHandler.handleComment(comment);
+                Delegates.CommentHandler.handleComment(comment, AssociatedUser);
             }
             catch
             {
@@ -346,7 +346,7 @@ namespace POILibCommunication
 
             try
             {
-                Delegates.WhiteboardCtrlHandler.whiteboardCtrlMsgReceived(msg);
+                Delegates.WhiteboardCtrlHandler.whiteboardCtrlMsgReceived(msg, AssociatedUser);
             }
             catch
             {
@@ -393,7 +393,7 @@ namespace POILibCommunication
             try
             {
                 //Pass the data to the pointer handler
-                Delegates.PointerHandler.pointerCtrlMsgReceived(msg);
+                Delegates.PointerHandler.pointerCtrlMsgReceived(msg, AssociatedUser);
             }
             catch
             {
