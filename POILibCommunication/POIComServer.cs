@@ -20,7 +20,7 @@ namespace POILibCommunication
         static byte[] myBuffer = new byte[1400];
         Socket listener;
 
-        int maxClientCount = 5;
+        int maxClientCount = POIGlobalVar.MaxMobileClientCount;
 
         public POIBroadcast BroadcastChannel { get; set; }
         public POIUDPReceiver UDPServer { get; set; }

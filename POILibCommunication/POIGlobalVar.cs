@@ -23,6 +23,8 @@ namespace POILibCommunication
         public static String KeywordsFileName { get { return "POI_Keywords.txt";} }
         public static String KeywordsFileType { get { return ".txt"; } }
 
+        public static int MaxMobileClientCount { get; set; }
+
         //public static POIUIScheduler Scheduler { get; set; }
 
         public static void POIDebugLog(object msg)
