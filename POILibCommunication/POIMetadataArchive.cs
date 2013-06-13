@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using System.IO;
+using System.Threading.Tasks;
 
 namespace POILibCommunication
 {
@@ -151,7 +152,7 @@ namespace POILibCommunication
             }
         }
 
-        public void WriteArchive()
+        public async Task WriteArchive()
         {
             FileStream fs = new FileStream(archiveFn, FileMode.Create);
             BinaryWriter bw = new BinaryWriter(fs);
@@ -194,17 +195,17 @@ namespace POILibCommunication
             bw.Close();
 
             //Upload the archive to the content server
-            POIContentServerHelper.uploadContent(presId, archiveFn);
+            await POIContentServerHelper.uploadContent(presId, archiveFn);
         }
 
-        public void ReadArchive()
+        public async Task ReadArchive()
         {
             //Clear the current container
             DataDict.Clear();
             DataIndexer.Clear();
 
             //Read the online into memory
-            byte[] buffer = POIContentServerHelper.getMetaArchive(presId, sessionId);
+            byte[] buffer = await POIContentServerHelper.getMetaArchive(presId, sessionId);
             if (buffer == null)
             {
                 POIGlobalVar.POIDebugLog("Cannot retrieve metadata archive!");

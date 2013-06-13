@@ -8,6 +8,8 @@ using System.Net.Http;
 using POILibCommunication;
 using System.IO;
 
+using System.Threading.Tasks;
+
 namespace POILibCommunication
 {
     public class POIContentServerHelper
@@ -29,37 +31,37 @@ namespace POILibCommunication
             get { return POIGlobalVar.ContentServerHome; }
         }
 
-        static public byte[] getPresInfo(int presId)
+        static public async Task<byte[]> getPresInfo(int presId)
         {
-            return getContent(presId, FileType.PresInfo, 0, 0);
+            return await getContent(presId, FileType.PresInfo, 0, 0);
         }
 
-        static public byte[] getStaticSlide(int presId, int slideIndex)
+        static public async Task<byte[]> getStaticSlide(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.Static, slideIndex, 0);
+            return await getContent(presId, FileType.Static, slideIndex, 0);
         }
 
-        static public byte[] getAnimationSlide(int presId, int slideIndex)
+        static public async Task<byte[]> getAnimationSlide(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.Animation, slideIndex, 0);
+            return await getContent(presId, FileType.Animation, slideIndex, 0);
         }
 
-        static public byte[] getAnimationSlideCover(int presId, int slideIndex)
+        static public async Task<byte[]> getAnimationSlideCover(int presId, int slideIndex)
         {
-            return getContent(presId, FileType.AnimationCover, slideIndex, 0);
+            return await getContent(presId, FileType.AnimationCover, slideIndex, 0);
         }
 
-        static public byte[] getPresCover(int presId)
+        static public async Task<byte[]> getPresCover(int presId)
         {
-            return getContent(presId, FileType.PresCover, 0, 0);
+            return await getContent(presId, FileType.PresCover, 0, 0);
         }
 
-        static public byte[] getMetaArchive(int presId, int sessionId)
+        static public async Task<byte[]> getMetaArchive(int presId, int sessionId)
         {
-            return getContent(presId, FileType.MetaArchive, 0, sessionId);
+            return await getContent(presId, FileType.MetaArchive, 0, sessionId);
         }
 
-        static private byte[] getContent(int presId, FileType fileType, int slideIndex, int sessionId)
+        static private async Task<byte[]> getContent(int presId, FileType fileType, int slideIndex, int sessionId)
         {
             String reqUrl = ContentServerHome + "content.php?"
                             + "presId=" + presId + "&"
@@ -75,7 +77,7 @@ namespace POILibCommunication
 
                 try
                 {
-                    return webClient.DownloadData(reqUrl);
+                    return await webClient.DownloadDataTaskAsync(reqUrl);
                 }
                 catch (WebException ex)
                 {
@@ -86,7 +88,7 @@ namespace POILibCommunication
             
         }
 
-        static public void uploadContent(int presId, string fileName)
+        static public async Task uploadContent(int presId, string fileName)
         {
             String reqUrl = ContentServerHome + "store.php?" + "presId=" + presId;
 
@@ -95,7 +97,7 @@ namespace POILibCommunication
             {
                 try
                 {
-                    byte[] response = webClient.UploadFile(reqUrl, "POST", fileName);
+                    byte[] response = await webClient.UploadFileTaskAsync(reqUrl, "POST", fileName);
                     string str = ASCIIEncoding.UTF8.GetString(response);
 
                     POIGlobalVar.POIDebugLog(":");
@@ -107,6 +109,7 @@ namespace POILibCommunication
             }
         }
 
+        /*
         static public string getAudioSyncReference(int presId, int sessionId)
         {
             String reqUrl = "http://192.168.0.100/3/audio/timequery/query.php?pid=1";
@@ -124,8 +127,6 @@ namespace POILibCommunication
                 }
             }
         }
-
-        
 
         public static void UploadFilesToRemoteUrl(string url, string fileName)
         {
@@ -147,17 +148,7 @@ namespace POILibCommunication
 
             byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
-            //For sending extra form data
-            /*
-            string formdataTemplate = "\r\n--" + boundary +
-            "\r\nContent-Disposition: form-data; name=\"{0}\";\r\n\r\n{1}";
-
-            foreach (string key in nvc.Keys)
-            {
-                string formitem = string.Format(formdataTemplate, key, nvc[key]);
-                byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formitem);
-                memStream.Write(formitembytes, 0, formitembytes.Length);
-            }*/
+            
 
 
             memStream.Write(boundarybytes, 0, boundarybytes.Length);
@@ -206,7 +197,7 @@ namespace POILibCommunication
 
             httpWebRequest2 = null;
             webResponse2 = null;
-        }
+        }*/
         
     }
 }

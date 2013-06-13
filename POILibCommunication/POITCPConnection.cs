@@ -5,6 +5,7 @@ using System.Text;
 
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace POILibCommunication
 {
@@ -143,7 +144,11 @@ namespace POILibCommunication
                             HeaderReceived = 0;
                             //ParseTCPControlMsg(myUser, mySocket, myUser.ctrlPayload);
 
-                            parsePacket(Payload);
+                            //To-DO: change this to run on a new thread instead
+                            Task.Run(() =>
+                            {
+                                parsePacket(Payload);
+                            });
                         }
                     }
                 }

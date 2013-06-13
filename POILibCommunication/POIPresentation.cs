@@ -7,6 +7,7 @@ using System.IO;
 
 using POILibCommunication;
 using System.Web.Script.Serialization;
+using System.Threading.Tasks;
 
 namespace POILibCommunication
 {
@@ -237,12 +238,12 @@ namespace POILibCommunication
             return composePacket(POIMsgDefinition.POI_PRESENTATION_CONTENT, packet);
         }
 
-        static public POIPresentation LoadPresFromContentServer(int contentId)
+        static public async Task<POIPresentation> LoadPresFromContentServer(int contentId)
         {
             POIPresentation pres = new POIPresentation();
             int offset = 0;
 
-            byte[] content = POIContentServerHelper.getPresInfo(contentId);
+            byte[] content = await POIContentServerHelper.getPresInfo(contentId);
 
             if (content != null)
             {
