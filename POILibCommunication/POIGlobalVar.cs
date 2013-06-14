@@ -29,7 +29,7 @@ namespace POILibCommunication
 
         public static void POIDebugLog(object msg)
         {
-            Debug.WriteLine(msg);
+            //Debug.WriteLine(msg);
         }
     }
 }

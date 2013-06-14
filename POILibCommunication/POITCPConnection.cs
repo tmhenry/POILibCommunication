@@ -6,6 +6,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace POILibCommunication
 {
@@ -47,11 +48,13 @@ namespace POILibCommunication
 
         public void StartReceiving()
         {
+            
             //Start receiving
             SocketAsyncEventArgs args = new SocketAsyncEventArgs();
             args.SetBuffer(TCP_ControlBuffer, 0, 1400);
             args.Completed += new EventHandler<SocketAsyncEventArgs>(Receive_Completed);
-
+            
+            //SocketAsyncEventArgs args = POITCPBufferPool.AllocEventArg();
             mySocket.ReceiveAsync(args);
         }
 
@@ -60,7 +63,6 @@ namespace POILibCommunication
             //Get the token as a user object
             if (args.SocketError == SocketError.Success && args.BytesTransferred > 0)
             {
-                
                 int remainingBytes = args.BytesTransferred;
                 int remainingHeaderBytes;
                 int remainingPayloadBytes;
@@ -68,6 +70,7 @@ namespace POILibCommunication
                 int offset = 0;
 
                 //POIGlobalVar.POIDebugLog("TCP control Received bytes " + args.BytesTransferred);
+                byte[] curBuffer = args.Buffer;
 
                 while (remainingBytes > 0)
                 {
@@ -145,10 +148,14 @@ namespace POILibCommunication
                             //ParseTCPControlMsg(myUser, mySocket, myUser.ctrlPayload);
 
                             //To-DO: change this to run on a new thread instead
+                            /*
                             Task.Run(() =>
                             {
                                 parsePacket(Payload);
-                            });
+                            });*/
+
+                            parsePacket(Payload);
+
                         }
                     }
                 }
@@ -157,6 +164,9 @@ namespace POILibCommunication
                 //Start another round of async read
                 try
                 {
+                    //Adjust the buffer space and reset the buffer
+
+
                     //POIGlobalVar.POIDebugLog("Waiting for reading!");
                     mySocket.ReceiveAsync(args);
                 }

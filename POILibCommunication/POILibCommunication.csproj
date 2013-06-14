@@ -76,6 +76,7 @@
     <Compile Include="POIRealtimeMsg.cs" />
     <Compile Include="POISessionMsg.cs" />
     <Compile Include="POISlide.cs" />
+    <Compile Include="POITCPBufferPool.cs" />
     <Compile Include="POITCPConnection.cs" />
     <Compile Include="POITimestamp.cs" />
     <Compile Include="POIUDPReceiver.cs" />
