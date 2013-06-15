@@ -53,12 +53,12 @@ namespace POILibCommunication
             size = fieldSize;
         }
 
-        public POITextComment(int myDepth, byte[] myAudioBytes)
+        public POITextComment(int myDepth, byte[] myAudioBytes, int length)
         {
             depth = myDepth;
             mode = OperationMode.AUDIO_CHANGED;
 
-            audioLength = myAudioBytes.Length;
+            audioLength = length;
             audioBytes = new byte[audioLength];
             Array.Copy(myAudioBytes, audioBytes, audioLength);
 

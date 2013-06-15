@@ -31,3 +31,8 @@ C:\Users\HenryXia\Documents\Visual Studio 2012\Projects\POILibCommunication\POIL
 C:\Users\HenryXia\Documents\Visual Studio 2012\Projects\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
 C:\Users\HenryXia\Documents\Visual Studio 2012\Projects\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
 C:\Users\HenryXia\documents\visual studio 2012\Projects\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
+C:\Users\HenryXia\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.dll
+C:\Users\HenryXia\Desktop\POILibCommunication\POILibCommunication\bin\Debug\POILibCommunication.pdb
+C:\Users\HenryXia\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.csprojResolveAssemblyReference.cache
+C:\Users\HenryXia\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.dll
+C:\Users\HenryXia\Desktop\POILibCommunication\POILibCommunication\obj\Debug\POILibCommunication.pdb
