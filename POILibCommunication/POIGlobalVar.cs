@@ -17,8 +17,8 @@ namespace POILibCommunication
         public static Dictionary<string, POIUser> WebUserProfiles { get; set; }
         public static Dictionary<string, POIUser> WebConUserMap { get; set; }
 
-        public static String ContentServerHome { get { return "http://192.168.0.130/"; } }
-        public static String DNSServerHome { get { return "http://192.168.0.130/dnsServerTest/interface.php"; } }
+        public static String ContentServerHome { get { return "http://192.168.0.130/POIWebService/contentServer/"; } }
+        public static String DNSServerHome { get { return "http://192.168.0.130/POIWebService/dnsServer/interface.php"; } }
 
         public static String KeywordsFileName { get { return "POI_Keywords.txt";} }
         public static String KeywordsFileType { get { return ".txt"; } }

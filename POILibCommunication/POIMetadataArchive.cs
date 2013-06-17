@@ -23,7 +23,7 @@ namespace POILibCommunication
 
     }
 
-    public class POIMetadataArchive 
+    public class POIMetadataArchive : POIMessage
     {
         //Data members
         POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
@@ -35,7 +35,8 @@ namespace POILibCommunication
         string logFn;
         double audioTimeReference;
         double sessionTimeReference;
-        
+
+        int size;
 
         //Properties
         public double AudioTimeReference
@@ -166,30 +167,35 @@ namespace POILibCommunication
             {
                 POIGlobalVar.POIDebugLog(e);
             }
-            
 
-            //Write the session timing reference
-            bw.Write(sessionTimeReference);
+            int subSize = 4 * sizeof(int) + 2 * sizeof(double);
+            subSize += 2 * sizeof(int) * DataIndexer.Count;
 
-            //Write the audio timing reference
-            bw.Write(audioTimeReference);
+            byte[] buffer = new byte[subSize];
+            int offset = 0;
 
-            //Write the number of events
-            bw.Write(DataDict.Count);
+            serializeInt32(buffer, ref offset, presId);
+            serializeInt32(buffer, ref offset, sessionId);
+
+            serializeDouble(buffer, ref offset, sessionTimeReference);
+            serializeDouble(buffer, ref offset, audioTimeReference);
+
+            serializeInt32(buffer, ref offset, DataIndexer.Count);
+
+            foreach (int key in DataIndexer.Keys)
+            {
+                serializeInt32(buffer, ref offset, key);
+                serializeInt32(buffer, ref offset, DataIndexer[key]);
+            }
+
+            serializeInt32(buffer, ref offset, DataDict.Count);
+
+            bw.Write(buffer);
 
             foreach (POIMessage message in DataDict.Values)
             {
                 byte[] data = message.getPacket();
                 bw.Write(data);
-            }
-
-            //Write the number of indexer contents
-            bw.Write(DataIndexer.Count);
-
-            foreach (int key in DataIndexer.Keys)
-            {
-                bw.Write(key);
-                bw.Write(DataIndexer[key]);
             }
 
             bw.Close();
@@ -200,11 +206,7 @@ namespace POILibCommunication
 
         public async Task ReadArchive()
         {
-            //Clear the current container
-            DataDict.Clear();
-            DataIndexer.Clear();
-
-            //Read the online into memory
+            //Read the online archive into memory
             byte[] buffer = await POIContentServerHelper.getMetaArchive(presId, sessionId);
             if (buffer == null)
             {
@@ -212,16 +214,66 @@ namespace POILibCommunication
                 return;
             }
 
-            MemoryStream ms = new MemoryStream(buffer);
-            BinaryReader br = new BinaryReader(ms);
+            size = buffer.Length;
+            int offset = 0;
+            deserialize(buffer, ref offset);
+        }
 
-            sessionTimeReference = br.ReadDouble();
-            audioTimeReference = br.ReadDouble();
-            
-            //Read the number of messages
-            int numMsgs = br.ReadInt32();
-            int initialOffset = (int) br.BaseStream.Position;
-            int offset = initialOffset;
+        
+
+        public override void serialize(byte[] buffer, ref int offset)
+        {
+            serializeInt32(buffer, ref offset, presId);
+            serializeInt32(buffer, ref offset, sessionId);
+
+            serializeDouble(buffer, ref offset, sessionTimeReference);
+            serializeDouble(buffer, ref offset, audioTimeReference);
+
+            serializeInt32(buffer, ref offset, DataIndexer.Count);
+
+            foreach (int key in DataIndexer.Keys)
+            {
+                serializeInt32(buffer, ref offset, key);
+                serializeInt32(buffer, ref offset, DataIndexer[key]);
+            }
+
+            serializeInt32(buffer, ref offset, DataDict.Count);
+
+            foreach (POIMessage message in DataDict.Values)
+            {
+                byte[] data = message.getPacket();
+                serializeByteArray(buffer, ref offset, data);
+            }
+
+        }
+
+        public override void deserialize(byte[] buffer, ref int offset)
+        {
+            //Clear the current container
+            DataDict.Clear();
+            DataIndexer.Clear();
+
+            deserializeInt32(buffer, ref offset, ref presId);
+            deserializeInt32(buffer, ref offset, ref sessionId);
+
+            deserializeDouble(buffer, ref offset, ref sessionTimeReference);
+            deserializeDouble(buffer, ref offset, ref audioTimeReference);
+
+            int numIndexer = 0;
+            deserializeInt32(buffer, ref offset, ref numIndexer);
+            int key = 0, val = 0;
+
+            for (int i = 0; i < numIndexer; i++)
+            {
+                deserializeInt32(buffer, ref offset, ref key);
+                deserializeInt32(buffer, ref offset, ref val);
+
+                DataIndexer.Add(key, val);
+            }
+
+            int numMsgs = 0;
+            deserializeInt32(buffer, ref offset, ref numMsgs);
+
             byte msgTypeByte = 0;
             POIMessage curMsg = null;
 
@@ -229,14 +281,10 @@ namespace POILibCommunication
             {
                 try
                 {
-                    msgTypeByte = buffer[offset];
-                    offset++;
-
+                    deserializeByte(buffer, ref offset, ref msgTypeByte);
                     curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
 
                     curMsg.deserialize(buffer, ref offset);
-                    //POIGlobalVar.POIDebugLog(offset);
-
                 }
                 catch (Exception e)
                 {
@@ -245,19 +293,15 @@ namespace POILibCommunication
 
                 LogEvent(curMsg);
             }
+        }
 
-            //Seek to the current offset within the buffer
-            br.BaseStream.Seek(offset, SeekOrigin.Begin);
-            
-            //Read the number of indexer contents
-            int numIndexer = br.ReadInt32();
-            for (int i = 0; i < numIndexer; i++)
-            {
-                int key = br.ReadInt32();
-                int val = br.ReadInt32();
+        public override byte[] getPacket()
+        {
+            byte[] packet = new byte[size];
+            int offset = 0;
+            serialize(packet, ref offset);
 
-                DataIndexer.Add(key, val);
-            }
+            return composePacket(POIMsgDefinition.POI_METADATA_ARCHIVE, packet);
         }
 
     }

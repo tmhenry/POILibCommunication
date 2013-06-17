@@ -245,5 +245,8 @@ namespace POILibCommunication
         public const int POI_AUDIO_CONTENT                    = 120;
         public const int POI_AUDIO_CONTROL                    = 121;
 
+        //Constants for Metadata archive
+        public const int POI_METADATA_ARCHIVE                 = 130;
+
     }
 }
