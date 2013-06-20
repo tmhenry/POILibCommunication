@@ -410,7 +410,7 @@ namespace POILibCommunication
         int frameNum = 0;
         int numText = 0;
         int numBeizerPath = 0;
-
+        int mode = 0;
 
         List<POIBeizerPath> paths = new List<POIBeizerPath>();
         List<POITextComment> texts = new List<POITextComment>();
@@ -418,11 +418,12 @@ namespace POILibCommunication
 
         int size;
 
-        int fieldSize = 3 * sizeof(int);
+        int fieldSize = 4 * sizeof(int);
 
         public int FrameNum { get { return frameNum; } set { frameNum = value; } }
         public int NumText { get { return numText; } set { numText = value; } }
         public int NumBeizerPath { get { return numBeizerPath; } set { numBeizerPath = value; } }
+        public int Mode { get { return mode; } set { mode = value; } }
         public List<POIBeizerPath> Paths { get { return paths; } set { paths = value; } }
         public List<POITextComment> Texts { get { return texts; } set { texts = value; } }
         public int Size { get { return size; } }
@@ -485,6 +486,7 @@ namespace POILibCommunication
         {
             base.serialize(buffer, ref offset);
             serializeInt32(buffer, ref offset, frameNum);
+            serializeInt32(buffer, ref offset, mode);
             serializeInt32(buffer, ref offset, numBeizerPath);
             serializeInt32(buffer, ref offset, numText);
             
@@ -509,6 +511,7 @@ namespace POILibCommunication
 
             base.deserialize(buffer, ref offset);
             deserializeInt32(buffer, ref offset, ref frameNum);
+            deserializeInt32(buffer, ref offset, ref mode);
             deserializeInt32(buffer, ref offset, ref numBeizerPath);
             deserializeInt32(buffer, ref offset, ref numText);
             

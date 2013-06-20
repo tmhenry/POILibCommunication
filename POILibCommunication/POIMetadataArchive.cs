@@ -28,6 +28,7 @@ namespace POILibCommunication
         //Data members
         POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
         Dictionary<int, int> DataIndexer = new Dictionary<int, int>();
+        Dictionary<int, List<POIComment>> commentRepo = new Dictionary<int, List<POIComment>>();
 
         int presId;
         int sessionId;
@@ -37,6 +38,7 @@ namespace POILibCommunication
         double sessionTimeReference;
 
         int size;
+        int numComments = 0;
 
         //Properties
         public double AudioTimeReference
@@ -68,6 +70,15 @@ namespace POILibCommunication
             }
         }
 
+        public Dictionary<string, List<POIComment>> CommentRepo
+        {
+            get
+            {
+                Dictionary<string, List<POIComment>> dataToSerialize = commentRepo.Keys.ToDictionary(p => p.ToString(), p => commentRepo[p]);
+                return dataToSerialize;
+            }
+        }
+
         //Constructor
         public POIMetadataArchive(int pId, int sId)
         {
@@ -91,6 +102,24 @@ namespace POILibCommunication
                 POIPointerMsg ptrMsg = message as POIPointerMsg;
                 message.setTimestampToDouble(ptrMsg.Timestamp);
                 DataDict.Add(ptrMsg.Timestamp, ptrMsg);
+            }
+            else if (message.MessageType == POIMsgDefinition.POI_USER_COMMENTS)
+            {
+                POIComment comment = message as POIComment;
+                if (comment.Mode == 1)
+                {
+                    DataDict.Add(message.Timestamp, message);
+                }
+                else
+                {
+                    //Add to the comment repo according to the slide index
+                    if (!commentRepo.ContainsKey(comment.FrameNum))
+                    {
+                        commentRepo[comment.FrameNum] = new List<POIComment>();
+                    }
+
+                    commentRepo[comment.FrameNum].Add(comment);
+                }
             }
             else
                 DataDict.Add(message.Timestamp, message);
@@ -168,7 +197,7 @@ namespace POILibCommunication
                 POIGlobalVar.POIDebugLog(e);
             }
 
-            int subSize = 4 * sizeof(int) + 2 * sizeof(double);
+            int subSize = 5 * sizeof(int) + 2 * sizeof(double);
             subSize += 2 * sizeof(int) * DataIndexer.Count;
 
             byte[] buffer = new byte[subSize];
@@ -190,12 +219,29 @@ namespace POILibCommunication
 
             serializeInt32(buffer, ref offset, DataDict.Count);
 
+            numComments = 0;
+            foreach (List<POIComment> cmtList in commentRepo.Values)
+            {
+                numComments += cmtList.Count;
+            }
+
+            serializeInt32(buffer, ref offset, numComments);
+
             bw.Write(buffer);
 
             foreach (POIMessage message in DataDict.Values)
             {
                 byte[] data = message.getPacket();
                 bw.Write(data);
+            }
+
+            foreach (List<POIComment> cmtList in commentRepo.Values)
+            {
+                foreach (POIComment comment in cmtList)
+                {
+                    byte[] data = comment.getPacket();
+                    bw.Write(data);
+                }
             }
 
             bw.Close();
@@ -238,11 +284,21 @@ namespace POILibCommunication
             }
 
             serializeInt32(buffer, ref offset, DataDict.Count);
+            serializeInt32(buffer, ref offset, numComments);
 
             foreach (POIMessage message in DataDict.Values)
             {
                 byte[] data = message.getPacket();
                 serializeByteArray(buffer, ref offset, data);
+            }
+
+            foreach (List<POIComment> cmtList in commentRepo.Values)
+            {
+                foreach (POIComment comment in cmtList)
+                {
+                    byte[] data = comment.getPacket();
+                    serializeByteArray(buffer, ref offset, data);
+                }
             }
 
         }
@@ -273,11 +329,31 @@ namespace POILibCommunication
 
             int numMsgs = 0;
             deserializeInt32(buffer, ref offset, ref numMsgs);
+            deserializeInt32(buffer, ref offset, ref numComments);
 
             byte msgTypeByte = 0;
             POIMessage curMsg = null;
 
+            //Deserialize the messages
             for (int i = 0; i < numMsgs; i++)
+            {
+                try
+                {
+                    deserializeByte(buffer, ref offset, ref msgTypeByte);
+                    curMsg = POIMessageFactory.Instance.CreateMessage(msgTypeByte);
+
+                    curMsg.deserialize(buffer, ref offset);
+                }
+                catch (Exception e)
+                {
+                    POIGlobalVar.POIDebugLog("WTF");
+                }
+
+                LogEvent(curMsg);
+            }
+
+            //Deserialize the comment
+            for (int i = 0; i < numComments; i++)
             {
                 try
                 {
