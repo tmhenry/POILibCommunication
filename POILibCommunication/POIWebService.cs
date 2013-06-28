@@ -48,6 +48,7 @@ namespace POILibCommunication
             CreateSession,
             SearchSession,
             EndSession,
+            UploadKeyword,
             Unknown
         }
 
@@ -228,6 +229,26 @@ namespace POILibCommunication
                 POIGlobalVar.POIDebugLog(e.Message);
             }
         }
+
+        public static void UploadKeyword(Dictionary<string, string> keywordEntry)
+        {
+            //Prepare the POST data
+            JavaScriptSerializer jsonParser = new JavaScriptSerializer();
+
+            string keywordEntryStr = jsonParser.Serialize(keywordEntry);
+            string postDataStr = @"type=" + (int)RequestType.UploadKeyword + "&data=" + keywordEntryStr;
+
+            try
+            {
+                string response = sendRequest(postDataStr);
+                POIGlobalVar.POIDebugLog(response);
+            }
+            catch (Exception e)
+            {
+                POIGlobalVar.POIDebugLog(e.Message);
+            }
+        }
+
         //Utility functions for web service, return null response if error occurs
         public static string sendRequest(string msg)
         {
