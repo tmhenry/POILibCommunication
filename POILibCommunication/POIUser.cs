@@ -38,6 +38,9 @@ namespace POILibCommunication
         //Variables for UDP connection
         private IPEndPoint __UDPEndPoint;
 
+        //Record the last time the user is trying to connect
+        private DateTime lastConnected;
+
         #endregion
 
         #region properties
@@ -66,6 +69,8 @@ namespace POILibCommunication
         }
 
         public Privilege UserPrivilege { get; set; }
+
+        public DateTime LastConnected { get; set; }
 
         #endregion
 

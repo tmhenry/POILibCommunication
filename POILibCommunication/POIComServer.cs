@@ -144,6 +144,7 @@ namespace POILibCommunication
                 user.UserID = userName;
                 user.UserPrivilege = (POIUser.Privilege)userType;
                 user.CtrlChannel = connection;
+                user.LastConnected = DateTime.UtcNow;
 
                 if (user.Status == POIUser.ConnectionStatus.Disconnected)
                 {

@@ -411,6 +411,8 @@ namespace POILibCommunication
         int numText = 0;
         int numBeizerPath = 0;
         int mode = 0;
+        int themeIndex = 0;
+        String summary = "";
 
         List<POIBeizerPath> paths = new List<POIBeizerPath>();
         List<POITextComment> texts = new List<POITextComment>();
@@ -427,6 +429,8 @@ namespace POILibCommunication
         public List<POIBeizerPath> Paths { get { return paths; } set { paths = value; } }
         public List<POITextComment> Texts { get { return texts; } set { texts = value; } }
         public int Size { get { return size; } }
+        public int ThemeIndex { get { return themeIndex; } set { themeIndex = value; } }
+        public String Summary { get { return summary; } set { summary = value; } }
 
         public POIComment()
         {
