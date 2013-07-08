@@ -420,7 +420,7 @@ namespace POILibCommunication
 
         int size;
 
-        int fieldSize = 4 * sizeof(int);
+        int fieldSize = 6 * sizeof(int);
 
         public int FrameNum { get { return frameNum; } set { frameNum = value; } }
         public int NumText { get { return numText; } set { numText = value; } }
@@ -442,6 +442,11 @@ namespace POILibCommunication
         {
             size = fieldSize + MetadataSize;
             //size = fieldSize;
+
+            System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+
+            if (summary != null) 
+                size += encoding.GetByteCount(summary);
 
             foreach (POIBeizerPath path in paths)
             {
@@ -493,6 +498,23 @@ namespace POILibCommunication
             serializeInt32(buffer, ref offset, mode);
             serializeInt32(buffer, ref offset, numBeizerPath);
             serializeInt32(buffer, ref offset, numText);
+            serializeInt32(buffer, ref offset, themeIndex);
+
+            System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+            int length = 0;
+
+            if (summary != null && summary != "")
+            {
+                length = encoding.GetByteCount(summary);
+                serializeInt32(buffer, ref offset, length);
+
+                if(length > 0)
+                    serializeByteArray(buffer, ref offset, encoding.GetBytes(summary));
+            }
+            else
+            {
+                serializeInt32(buffer, ref offset, length);
+            }
             
 
             foreach (POIBeizerPath path in paths)
@@ -518,8 +540,20 @@ namespace POILibCommunication
             deserializeInt32(buffer, ref offset, ref mode);
             deserializeInt32(buffer, ref offset, ref numBeizerPath);
             deserializeInt32(buffer, ref offset, ref numText);
-            
+            deserializeInt32(buffer, ref offset, ref themeIndex);
 
+            int length = 0;
+            deserializeInt32(buffer, ref offset, ref length);
+
+            if (length > 0)
+            {
+                byte[] stringData = buffer.Skip(offset).Take(length).ToArray();
+                offset += length;
+                System.Text.Encoding encoding = new System.Text.UTF8Encoding();
+                summary = encoding.GetString(stringData);
+
+                size += length;
+            }
 
             paths = new List<POIBeizerPath>();
             for (int i = 0; i < numBeizerPath; i++)
