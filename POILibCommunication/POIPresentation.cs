@@ -182,13 +182,6 @@ namespace POILibCommunication
             //Deserialize the presenation ID
             deserializeInt32(buffer, ref offset, ref presId);
 
-            //Create the folder if the directory does not exist
-            String folderPath = Path.Combine(POIArchive.ArchiveHome, BasePath);
-            if (!Directory.Exists(folderPath))
-            {
-                Directory.CreateDirectory(folderPath);
-            }
-
             //Deserialize the info length
             int infoLength = 0;
             deserializeInt32(buffer, ref offset, ref infoLength);

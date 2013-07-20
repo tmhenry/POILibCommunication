@@ -59,44 +59,6 @@ namespace POILibCommunication
             get { return durationList; }
         }
 
-        
-
-        public Uri Source
-        {
-            get 
-            {
-                String uri = Path.Combine(POIArchive.ArchiveHome, parentPresentation.BasePath, index.ToString());
-                
-                switch (format)
-                {
-                    case SlideContentFormat.JPEG:
-                        uri += @".jpg";
-                        break;
-
-                    case SlideContentFormat.PNG:
-                        uri += @".png";
-                        break;
-
-                    case SlideContentFormat.WMV:
-                        uri += @".wmv";
-                        break;
-
-                    default:
-                        throw (new Exception { });
-                }
-
-                return new Uri(uri);
-            }
-        }
-
-        protected String SourceWithoutFormat
-        {
-            get
-            {
-                return Path.Combine(POIArchive.ArchiveHome, parentPresentation.BasePath, index.ToString());
-            }
-        }
-
 
         //Functions
         public POISlide(POIPresentation parent)
