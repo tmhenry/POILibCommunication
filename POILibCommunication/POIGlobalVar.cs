@@ -52,6 +52,8 @@ namespace POILibCommunication
             }
             catch (Exception e)
             {
+                ContentServerHome = "http://192.168.0.130/POIWebService/contentServer/";
+                DNSServerHome = "http://192.168.0.130/POIWebService/dnsServer/interface.php";
                 POIDebugLog(e);
             }
         }
