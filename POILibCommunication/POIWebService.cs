@@ -115,6 +115,9 @@ namespace POILibCommunication
             serviceEntry.Add(@"ip", ip4Addr.ToString());
             serviceEntry.Add(@"port", Instance.servicePort.ToString());
 
+            POIGlobalVar.ProxyServerIP = ip4Addr.ToString();
+            POIGlobalVar.ProxyServerPort = Instance.servicePort;
+
             string serviceEntryStr = jsonParser.Serialize(serviceEntry);
             POIGlobalVar.POIDebugLog(serviceEntryStr);
 

@@ -20,6 +20,8 @@ namespace POILibCommunication
         public static Dictionary<string, POIUser> WebUserProfiles { get; set; }
         public static Dictionary<string, POIUser> WebConUserMap { get; set; }
 
+        public static String ProxyServerIP { get; set; }
+        public static int ProxyServerPort { get; set; }
         public static String ContentServerHome { get; set; }
         public static String DNSServerHome { get; set; }
 
