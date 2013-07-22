@@ -11,6 +11,11 @@ using System.Web.Script.Serialization;
 
 namespace POILibCommunication
 {
+    public interface LogMessageDelegate
+    {
+        void logMessage(string msg);
+    }
+
     //Define all the global variables here
     public static class POIGlobalVar
     {
@@ -30,11 +35,18 @@ namespace POILibCommunication
 
         public static int MaxMobileClientCount { get; set; }
 
+        public static LogMessageDelegate logDelegate { get; set; }
+
         //public static POIUIScheduler Scheduler { get; set; }
 
         public static void POIDebugLog(object msg)
         {
             //Debug.WriteLine(msg);
+
+            if (logDelegate != null)
+            {
+                logDelegate.logMessage(msg.ToString());
+            }
         }
 
         public static void LoadConfigFile()
