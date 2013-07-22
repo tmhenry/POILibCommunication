@@ -101,22 +101,33 @@ namespace POILibCommunication
             serviceEntry.Add(@"name", name);
             serviceEntry.Add(@"description", desc);
 
-            IPAddress[] localAddrs = Dns.GetHostAddresses(Dns.GetHostName());
-            IPAddress ip4Addr = localAddrs[0];
-
-            foreach (IPAddress curIP in localAddrs)
+            if (POIGlobalVar.ProxyServerIP == null || POIGlobalVar.ProxyServerIP == "")
             {
-                if (curIP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                IPAddress[] localAddrs = Dns.GetHostAddresses(Dns.GetHostName());
+                IPAddress ip4Addr = localAddrs[0];
+
+                foreach (IPAddress curIP in localAddrs)
                 {
-                    ip4Addr = curIP;
+                    if (curIP.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        ip4Addr = curIP;
+                    }
                 }
+
+                serviceEntry.Add(@"ip", ip4Addr.ToString());
+                serviceEntry.Add(@"port", Instance.servicePort.ToString());
+
+                //POIGlobalVar.ProxyServerIP = ip4Addr.ToString();
+                POIGlobalVar.ProxyServerPort = Instance.servicePort;
             }
+            else
+            {
+                serviceEntry.Add(@"ip", POIGlobalVar.ProxyServerIP);
+                serviceEntry.Add(@"port", Instance.servicePort.ToString());
 
-            serviceEntry.Add(@"ip", ip4Addr.ToString());
-            serviceEntry.Add(@"port", Instance.servicePort.ToString());
-
-            POIGlobalVar.ProxyServerIP = ip4Addr.ToString();
-            POIGlobalVar.ProxyServerPort = Instance.servicePort;
+                POIGlobalVar.ProxyServerPort = Instance.servicePort;
+            }
+            
 
             string serviceEntryStr = jsonParser.Serialize(serviceEntry);
             POIGlobalVar.POIDebugLog(serviceEntryStr);

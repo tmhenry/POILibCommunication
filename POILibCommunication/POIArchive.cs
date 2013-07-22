@@ -11,7 +11,7 @@ namespace POILibCommunication
     {
         static public String ArchiveHome 
         {
-            get { return System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments); }
+            get { return AppDomain.CurrentDomain.BaseDirectory; }
         }
     }
 }

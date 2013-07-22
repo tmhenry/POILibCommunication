@@ -184,6 +184,7 @@ namespace POILibCommunication
 
         public async Task WriteArchive()
         {
+            POIGlobalVar.POIDebugLog(archiveFn);
             FileStream fs = new FileStream(archiveFn, FileMode.Create);
             BinaryWriter bw = new BinaryWriter(fs);
 

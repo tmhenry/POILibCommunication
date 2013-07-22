@@ -62,7 +62,10 @@ namespace POILibCommunication
 
                 ContentServerHome = configDict["ContentServer"];
                 DNSServerHome = configDict["DNSServer"];
+                ProxyServerIP = configDict["ProxyServerIP"];
 
+                POIDebugLog(ContentServerHome);
+                POIDebugLog(ProxyServerIP);
             }
             catch (Exception e)
             {

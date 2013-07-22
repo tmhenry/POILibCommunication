@@ -140,7 +140,7 @@ namespace POILibCommunication
                             remainingBytes -= bytesProcessed;
                             offset += bytesProcessed;
 
-                            POIGlobalVar.POIDebugLog(PayloadReceived);
+                            //POIGlobalVar.POIDebugLog(PayloadReceived);
 
                             //Payload received completely
                             //POIGlobalVar.POIDebugLog("Here!");

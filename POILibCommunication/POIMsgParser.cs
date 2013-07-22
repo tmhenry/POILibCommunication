@@ -102,7 +102,7 @@ namespace POILibCommunication
             byte cmdType = 0;
             deserializeByte(data, ref offset, ref cmdType);
 
-            POIGlobalVar.POIDebugLog("Current type is: " + cmdType);
+            //POIGlobalVar.POIDebugLog("Current type is: " + cmdType);
 
             //Get the timestamp of the packet
 
