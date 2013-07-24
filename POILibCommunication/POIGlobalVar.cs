@@ -7,7 +7,6 @@ using System.Windows;
 using System.Diagnostics;
 
 using System.IO;
-using System.Web.Script.Serialization;
 
 namespace POILibCommunication
 {
@@ -46,32 +45,6 @@ namespace POILibCommunication
             if (logDelegate != null)
             {
                 logDelegate.logMessage(msg.ToString());
-            }
-        }
-
-        public static void LoadConfigFile()
-        {
-            string fn = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"poi_config");
-
-            try
-            {
-                string configJson = File.ReadAllText(fn);
-                JavaScriptSerializer jsonHandler = new JavaScriptSerializer();
-                Dictionary<string, string> configDict = jsonHandler.Deserialize(configJson, typeof(Dictionary<string, string>)) 
-                    as Dictionary<string, string>;
-
-                ContentServerHome = configDict["ContentServer"];
-                DNSServerHome = configDict["DNSServer"];
-                ProxyServerIP = configDict["ProxyServerIP"];
-
-                POIDebugLog(ContentServerHome);
-                POIDebugLog(ProxyServerIP);
-            }
-            catch (Exception e)
-            {
-                //ContentServerHome = "http://192.168.0.130/POIWebService/contentServer/";
-                //DNSServerHome = "http://192.168.0.130/POIWebService/dnsServer/interface.php";
-                POIDebugLog(e);
             }
         }
     }
