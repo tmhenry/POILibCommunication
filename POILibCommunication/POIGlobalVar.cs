@@ -28,6 +28,7 @@ namespace POILibCommunication
         public static int ProxyServerPort { get; set; }
         public static String ContentServerHome { get; set; }
         public static String DNSServerHome { get; set; }
+        public static String Uploader { get; set; }
 
         public static String KeywordsFileName { get { return "POI_Keywords.txt";} }
         public static String KeywordsFileType { get { return ".txt"; } }
