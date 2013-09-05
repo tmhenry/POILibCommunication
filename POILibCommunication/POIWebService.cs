@@ -250,6 +250,9 @@ namespace POILibCommunication
             JavaScriptSerializer jsonParser = new JavaScriptSerializer();
 
             string keywordEntryStr = jsonParser.Serialize(keywordEntry);
+            //byte[] bytes = Encoding.Default.GetBytes(keywordEntryStr);
+            //keywordEntryStr = Encoding.UTF8.GetString(bytes);
+
             string postDataStr = @"type=" + (int)RequestType.UploadKeyword + "&data=" + keywordEntryStr;
 
             try
