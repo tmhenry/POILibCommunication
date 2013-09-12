@@ -113,7 +113,7 @@ namespace POILibCommunication
     {
         public abstract byte[] getPacket();
 
-        private double timestamp;
+        protected double timestamp;
         protected byte messageType;
 
         public override void serialize(byte[] buffer, ref int offset)

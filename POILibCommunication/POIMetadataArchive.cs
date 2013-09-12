@@ -90,6 +90,13 @@ namespace POILibCommunication
 
             //Record the archive creation time as the time reference
             sessionTimeReference = POITimestamp.ConvertToUnixTimestamp(DateTime.Now);
+            audioTimeReference = sessionTimeReference;
+
+            DataDict = new POIMetadataContainer<double>();
+            DataIndexer = new Dictionary<int, int>();
+            numComments = 0;
+
+            size = 5 * sizeof(int) + 2 * sizeof(double);
         }
 
 

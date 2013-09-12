@@ -100,7 +100,7 @@ namespace POILibCommunication
                     byte[] response = await webClient.UploadFileTaskAsync(reqUrl, "POST", fileName);
                     string str = ASCIIEncoding.UTF8.GetString(response);
 
-                    POIGlobalVar.POIDebugLog(":");
+                    POIGlobalVar.POIDebugLog(str);
                 }
                 catch (WebException ex)
                 {

@@ -49,6 +49,16 @@ namespace POILibCommunication
             SearchSession,
             EndSession,
             UploadKeyword,
+            GetPresentationByUserRight,
+		    GetCourseByUserRight,
+		    GetCourseList,
+		    GetActivityList,
+		    GetUserByRelationship,
+		    GetPresInfoBySessionId,
+		    GetOrganizationList,
+		    GetCategoryList,
+		    GetPresentationListById,
+		    GetPresentationListByCategory,
             Unknown
         }
 
@@ -122,7 +132,15 @@ namespace POILibCommunication
             }
             else
             {
-                serviceEntry.Add(@"ip", POIGlobalVar.ProxyServerIP);
+                //Check if the server ip contains the port that http service is running on
+                //If so cut the port to ensure correct server ip address
+                string proxyIp = POIGlobalVar.ProxyServerIP;
+                if (proxyIp.IndexOf(":") != -1)
+                {
+                    proxyIp = proxyIp.Substring(0, proxyIp.IndexOf(":"));
+                }
+
+                serviceEntry.Add(@"ip", proxyIp);
                 serviceEntry.Add(@"port", Instance.servicePort.ToString());
 
                 POIGlobalVar.ProxyServerPort = Instance.servicePort;
@@ -275,6 +293,7 @@ namespace POILibCommunication
             {
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 wc.Proxy = null;
+                wc.Encoding = Encoding.UTF8;
 
                 try
                 {

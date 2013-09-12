@@ -38,6 +38,8 @@ namespace POILibCommunication
             x = myX;
             y = myY;
             timestamp = time;
+
+            base.timestamp = time;
         }
 
         //Serializer
@@ -59,6 +61,8 @@ namespace POILibCommunication
             deserializeFloat(buffer, ref offset, ref x);
             deserializeFloat(buffer, ref offset, ref y);
             deserializeDouble(buffer, ref offset, ref timestamp);
+
+            base.timestamp = timestamp;
         }
 
         public override byte[] getPacket()
