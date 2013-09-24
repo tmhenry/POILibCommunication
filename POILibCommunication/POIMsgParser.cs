@@ -143,6 +143,10 @@ namespace POILibCommunication
                     parsePointerCtrlMsg(data, offset);
                     break;
 
+                case POIMsgDefinition.POI_PUSH:
+                    parsePushMsg(data, offset);
+                    break;
+
             }
                               
         }
@@ -283,14 +287,17 @@ namespace POILibCommunication
 
         private void parsePushMsg(byte[] buffer, int offset)
         {
-            POIGlobalVar.POIDebugLog("Here in push!");
-            if (privilegeLevel < Privilege.Viewer || Type != ParserType.Data) return;
-
-
             POIPushMsg msg = new POIPushMsg();
             msg.deserialize(buffer, ref offset);
 
-            POIGlobalVar.POIDebugLog("Type: " + msg.Type);
+            try
+            {
+                Delegates.DataChannelMsgDelegate.pushMsgReceived(msg, AssociatedUser);
+            }
+            catch (Exception e)
+            {
+                POIGlobalVar.POIDebugLog("In handling push message: " + e.Message);
+            }
         }
 
         private void parsePresControlMsg(byte[] buffer, int offset)

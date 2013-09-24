@@ -28,6 +28,7 @@ namespace POILibCommunication
         //Data members
         POIMetadataContainer<Double> DataDict = new POIMetadataContainer<Double>();
         Dictionary<int, int> DataIndexer = new Dictionary<int, int>();
+        List<int> SnapshotIndexer = new List<int>();
         Dictionary<int, List<POIComment>> commentRepo = new Dictionary<int, List<POIComment>>();
 
         int presId;
@@ -70,6 +71,14 @@ namespace POILibCommunication
             }
         }
 
+        public List<int> SnapshotList
+        {
+            get
+            {
+                return SnapshotIndexer;
+            }
+        }
+
         public Dictionary<string, List<POIComment>> CommentRepo
         {
             get
@@ -92,11 +101,13 @@ namespace POILibCommunication
             sessionTimeReference = POITimestamp.ConvertToUnixTimestamp(DateTime.Now);
             audioTimeReference = sessionTimeReference;
 
+            //Initialize an empty metadata archive
             DataDict = new POIMetadataContainer<double>();
             DataIndexer = new Dictionary<int, int>();
+            SnapshotIndexer = new List<int>();
             numComments = 0;
 
-            size = 5 * sizeof(int) + 2 * sizeof(double);
+            size = 6 * sizeof(int) + 2 * sizeof(double);
         }
 
 
@@ -155,6 +166,17 @@ namespace POILibCommunication
             LogEvent(message);
         }
 
+        public void LogEventAndUpdateSnapshotIndexer(POIWhiteboardMsg message)
+        {
+            if (message.CtrlType == (int)WBCtrlType.Save)
+            {
+                //Add the event into the whiteboard indexer
+                SnapshotIndexer.Add(DataDict.Values.Count);
+            }
+
+            LogEvent(message);
+        }
+
         private void updateTimeReference()
         {
             //Update the audio time reference
@@ -205,8 +227,9 @@ namespace POILibCommunication
                 POIGlobalVar.POIDebugLog(e);
             }
 
-            int subSize = 5 * sizeof(int) + 2 * sizeof(double);
+            int subSize = 6 * sizeof(int) + 2 * sizeof(double);
             subSize += 2 * sizeof(int) * DataIndexer.Count;
+            subSize += sizeof(int) * SnapshotIndexer.Count;
 
             byte[] buffer = new byte[subSize];
             int offset = 0;
@@ -217,12 +240,21 @@ namespace POILibCommunication
             serializeDouble(buffer, ref offset, sessionTimeReference);
             serializeDouble(buffer, ref offset, audioTimeReference);
 
+            //Write the metadata indexer data
             serializeInt32(buffer, ref offset, DataIndexer.Count);
 
             foreach (int key in DataIndexer.Keys)
             {
                 serializeInt32(buffer, ref offset, key);
                 serializeInt32(buffer, ref offset, DataIndexer[key]);
+            }
+
+            //Write the snapshot indexer data
+            serializeInt32(buffer, ref offset, SnapshotIndexer.Count);
+
+            foreach (int sIndex in SnapshotIndexer)
+            {
+                serializeInt32(buffer, ref offset, sIndex);
             }
 
             serializeInt32(buffer, ref offset, DataDict.Count);
@@ -291,6 +323,13 @@ namespace POILibCommunication
                 serializeInt32(buffer, ref offset, DataIndexer[key]);
             }
 
+            serializeInt32(buffer, ref offset, SnapshotIndexer.Count);
+
+            foreach (int sIndex in SnapshotIndexer)
+            {
+                serializeInt32(buffer, ref offset, sIndex);
+            }
+
             serializeInt32(buffer, ref offset, DataDict.Count);
             serializeInt32(buffer, ref offset, numComments);
 
@@ -316,6 +355,7 @@ namespace POILibCommunication
             //Clear the current container
             DataDict.Clear();
             DataIndexer.Clear();
+            SnapshotIndexer.Clear();
 
             deserializeInt32(buffer, ref offset, ref presId);
             deserializeInt32(buffer, ref offset, ref sessionId);
@@ -333,6 +373,17 @@ namespace POILibCommunication
                 deserializeInt32(buffer, ref offset, ref val);
 
                 DataIndexer.Add(key, val);
+            }
+
+            int numSnapshots = 0;
+            deserializeInt32(buffer, ref offset, ref numSnapshots);
+            int sIndex = 0;
+
+            for (int i = 0; i < numSnapshots; i++)
+            {
+                deserializeInt32(buffer, ref offset, ref sIndex);
+
+                SnapshotIndexer.Add(sIndex);
             }
 
             int numMsgs = 0;

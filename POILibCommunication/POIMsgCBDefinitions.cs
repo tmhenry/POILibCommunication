@@ -35,6 +35,12 @@ namespace POILibCommunication
         void pushMsgReceived(ref PushPar par, byte[] data);
     }
 
+    //Handle new push message from client
+    public interface POIDataChannelMsgCB
+    {
+        void pushMsgReceived(POIPushMsg msg, POIUser user);
+    }
+
     //Handle Presentation control messages
     public interface POIPresentationControlMsgCB
     {

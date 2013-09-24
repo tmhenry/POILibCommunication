@@ -153,7 +153,8 @@ namespace POILibCommunication
     {
         Show = 0,
         Hide,
-        Clear
+        Clear,
+        Save
     }
 
     public struct PresentationControlPar
@@ -187,6 +188,13 @@ namespace POILibCommunication
         End
     }
 
+    #endregion
+
+    #region
+    public enum PushMsgType
+    {
+        Snapshot = 0,
+    }
     #endregion
 
     public static class POIMsgDefinition
