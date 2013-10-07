@@ -5,6 +5,7 @@ using System.Text;
 
 using System.IO;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace POILibCommunication
 {
@@ -34,6 +35,7 @@ namespace POILibCommunication
         int presId;
         int sessionId;
         string archiveFn;
+        string archiveFnJson;
         string logFn;
         double audioTimeReference;
         double sessionTimeReference;
@@ -95,6 +97,7 @@ namespace POILibCommunication
             sessionId = sId;
 
             archiveFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".meta");
+            archiveFnJson = archiveFn + ".json";
             logFn = Path.Combine(POIArchive.ArchiveHome, pId + "_" + sId + ".txt");
 
             //Record the archive creation time as the time reference
@@ -288,6 +291,23 @@ namespace POILibCommunication
 
             //Upload the archive to the content server
             await POIContentServerHelper.uploadContent(presId, archiveFn);
+
+            //Upload the json data to the content server
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(archiveFnJson))
+                {
+                    JavaScriptSerializer js = new JavaScriptSerializer();
+                    writer.Write(js.Serialize(this));
+                }
+
+                //Upload the .json to the content server
+                await POIContentServerHelper.uploadContent(presId, archiveFnJson);
+            }
+            catch (Exception e)
+            {
+                POIGlobalVar.POIDebugLog("In writing .meta.json: " + e.Message);
+            }
         }
 
         public async Task ReadArchive()
