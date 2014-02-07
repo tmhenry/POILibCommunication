@@ -109,6 +109,31 @@ namespace POILibCommunication
             }
         }
 
+        static public async Task<string> uploadJsonStrToQiniuCDN(string jsonStr)
+        {
+            //String reqUrl = ContentServerHome + "qiniu_store.php?isJson=true";
+            String reqUrl = "http://www.qdaan.com/POIWebService-test/contentServer/qiniu_store.php?isJson=true";
+            POIGlobalVar.POIDebugLog(jsonStr);
+
+            using (WebClient webClient = new WebClient())
+            {
+                try
+                {
+                    POIGlobalVar.POIDebugLog("here");
+                    webClient.Headers.Add("Content-Type", "application/json");
+                    string mediaId = await webClient.UploadStringTaskAsync(reqUrl, "POST", jsonStr);
+
+                    POIGlobalVar.POIDebugLog(mediaId);
+                    return mediaId;
+                }
+                catch (WebException ex)
+                {
+                    POIGlobalVar.POIDebugLog(ex);
+                    return "";
+                }
+            }
+        }
+
         /*
         static public string getAudioSyncReference(int presId, int sessionId)
         {
