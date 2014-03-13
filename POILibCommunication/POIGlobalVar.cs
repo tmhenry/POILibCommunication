@@ -31,6 +31,13 @@ namespace POILibCommunication
         public static String DNSServerHome { get; set; }
         public static String Uploader { get; set; }
 
+        public static String ProxyHost { get; set; }
+        public static int ProxyPort { get; set; }
+        public static String DbHost { get; set; }
+        public static String DbName { get; set; }
+        public static String DbUsername { get; set; }
+        public static String DbPassword { get; set; }
+
         public static String KeywordsFileName { get { return "POI_Keywords.txt";} }
         public static String KeywordsFileType { get { return ".txt"; } }
 
