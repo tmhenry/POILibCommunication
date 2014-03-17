@@ -121,6 +121,8 @@ namespace POILibCommunication
                 {
                     POIGlobalVar.POIDebugLog("here");
                     webClient.Headers.Add("Content-Type", "application/json");
+                    webClient.Encoding = Encoding.UTF8;
+
                     string mediaId = await webClient.UploadStringTaskAsync(reqUrl, "POST", jsonStr);
 
                     POIGlobalVar.POIDebugLog(mediaId);
