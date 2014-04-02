@@ -111,8 +111,10 @@ namespace POILibCommunication
 
         static public async Task<string> uploadJsonStrToQiniuCDN(string jsonStr)
         {
-            //String reqUrl = ContentServerHome + "qiniu_store.php?isJson=true";
-            String reqUrl = "http://www.qdaan.com/POIWebService-test/contentServer/qiniu_store.php?isJson=true";
+            String reqUrl = ContentServerHome + "qiniu_store.php?isJson=true";
+            //String reqUrl = "http://www.qdaan.com/POIWebService-test/contentServer/qiniu_store.php?isJson=true";
+            //String reqUrl = "http://www.uwenda.com/POIWebService/contentServer/qiniu_store.php?isJson=true";
+            POIGlobalVar.POIDebugLog("Uploading to: " + reqUrl);
             POIGlobalVar.POIDebugLog(jsonStr);
 
             using (WebClient webClient = new WebClient())
